@@ -1,83 +1,106 @@
 # Morula
 
-> A tool to manage monorepos,
-> i.e. repositories containing the source code of several code bases
-> that are used together to create one large product.
+> efficient testing for monorepos
 
 
-## Motivation
+Monorepos are repositories that contain multiple code bases that belong together.
+They allow efficient work on a complex project
+that was broken up into several subprojects
+to make things more manageable.
 
-Large monolithic code bases should be broken up
-into more manageable and reusable pieces.
-Some of those pieces will be completely independent
-from the product they originated from.
-They usually become a completely independent project living in its own repository.
-Other pieces are just split off the main code base
-to keep things modular and manageable.
-They are more like subprojects of the main project,
-and should remain a part of the product.
-
-There is currently not enough tool support
-to work with subprojects that live in their own repositories.
-Development often requires changes to several subprojects at the same time.
-GitHub doesn't support pull requests across several repos,
-necessitating several pull requests.
-End-to-end tests need to run each time any of the subprojects are changed
-and require combining several repositories.
-This is problematic in several ways on CI servers.
-
-If documentation is extracted into its own subprojects,
-it is hard to keep it in sync with ongoing development,
-since documentation updates cannot be part of the pull request for the changes.
-
-More motivation in the
-[monorepo design document of BabelJS](https://github.com/babel/babel/blob/master/doc/design/monorepo.md)
+Morula provides facilities
+to run the tests for all subprojects
+affected by a particular change in a monorepo,
+followed for example by the end-to-end tests for the overall product.
+This makes testing monorepos via a CI server reliable and fast.
 
 
-## Approach: monorepositories
+## Repo structure
 
-- all subprojects move into top-level directories of one repository
-- each subproject can still be worked on by itself within this directory
-- changes in several subprojects can be reviewed in one pull request
-- one can run all tests for all projects plus end-to-end tests,
-  or any combination of them on the CI server
+A Morula monorepository contains the subprojects located in top-level folders,
+plus a Morula configuration file.
+Each subproject can be worked on by itself within its directory,
+and is versioned and released independent from the other subprojects.
+The subprojects follow
+[o-tools](https://github.com/Originate/o-tools-node) conventions,
+meaning they contain a standardized set of scripts:
+- `bin/setup`: makes the subproject runnable, for example by installing dependencies
+- `bin/spec`: runs all tests for this subproject
 
-React, Meteor, Ember, and Babel take this approach
 
+## Configuration file
 
-## Solution: Morula
+The config file defines which subprojects should be tested first/last,
+and which ones should always/never be tested independent of changes.
 
-- each subproject lives in a top-level folder
-- each subproject follows [o-tools](https://github.com/Originate/o-tools-node) conventions
-  - `bin/setup` makes the subproject runnable (installs dependencies etc)
-  - `bin/spec` runs all tests
-- running tests for a branch only tests the changed subprojects
-  and ignores ones that have no changes:
-  - determine which files are changed compared to the master branch
-  - determine which top-level directories contain those changed files
-  - run only the tests for the corresponding sub-projects
-  - always run the full end-to-end tests at the end
-  - possibly run tests for different subprojects in parallel
-- the repository contains a config file that:
-  - defines the order in which the subprojects are tested
-  - defines subprojects that should always/never be tested
-
-Example:
-- always test the `shared` repo first
-- always test the `e2e` subproject last, if all other subprojects work
-- test all other repos in between
-
+__morula.yml__
 ```yml
 before-all:
   - shared
 after-all:
   - e2e
+always:
+  - e2e
+never:
+  - website
 ```
+
+
+## Commands
+
+- `morula setup`:
+  runs the `bin/setup` scripts for each subproject
+- `morula test`:
+  determines which folders contain changes
+  and runs the tests for only the respective subprojects.
+
+
+
+## Why Monorepos
+
+Large monolithic code bases should be broken up
+into more manageable and reusable pieces.
+Some of these pieces will be completely independent
+from the product they originated from
+and become a completely separate project.
+Those are the straightforward cases.
+Problematic are the pieces that are more like _subprojects_ of the main project
+and should remain in the vicinity of it.
+
+There is currently not enough tool support
+to work with subprojects that live in their own repositories.
+Cloning, setting up, and keeping dozens of repos up to date
+with ongoing development is a lot of boilerplate activity.
+Configuring subprojects to run against locally checked out
+vs published dependencies is another.
+It requires switching several subprojects to branches under current development.
+GitHub doesn't support pull requests across several repos,
+necessitating one pull request per repository to implement many changes.
+This means changes
+that break integration with other subprojects
+can not be found early in the development process.
+End-to-end testing needs to happen on each change in any subproject
+and combine several repositories,
+which is difficult to implement on CI servers.
+If documentation is extracted into its own subproject,
+it is hard to keep it in sync with ongoing development,
+since documentation updates cannot be part of the pull requests
+for the code changes.
+More motivation in the
+[monorepo design document of BabelJS](https://github.com/babel/babel/blob/master/doc/design/monorepo.md)
+
+Because of this,
+many complex open-source projects
+like React, Meteor, Ember, and Babel
+have moved towards an architecture that puts
+all subprojects into the same repository, i.e. a _monorepository_.
+Doing so allows to implement, review, and test changes
+in several subprojects together and thereby address all challenges mentioned above.
 
 
 ## Related Work
 
 __[Lerna](https://github.com/lerna/lerna)__
 - only works if all subprojects are NPM packages
-- enforces a pretty dumb directory structure
+- enforces an unnecessarily nested directory structure
 
