@@ -10,8 +10,7 @@ to make things more manageable.
 
 Morula provides facilities
 to run the tests for all subprojects
-affected by a particular change in a monorepo,
-followed for example by the end-to-end tests for the overall product.
+affected by a particular change in a monorepo.
 This makes testing monorepos via a CI server reliable and fast.
 
 
@@ -50,10 +49,10 @@ never:
 
 - `morula setup`:
   runs the `bin/setup` scripts for each subproject
+
 - `morula test`:
   determines which folders contain changes
   and runs the tests for only the respective subprojects.
-
 
 
 ## Why Monorepos
