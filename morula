@@ -1,0 +1,120 @@
+#!/usr/bin/env bash
+set -e
+
+VERSION="0.0.0"
+
+
+# The main program logic
+function main {
+
+  # PARSE INPUT
+
+  if [ "$1" == "-v" ]; then
+    exit_with_version
+  fi
+
+  main_branch_name=$1
+  if [ -z "$main_branch_name" ]; then
+    exit_with_usage_instructions
+  fi
+
+
+  # GET CHANGES
+
+  current_branch_name=$(git branch | grep -e "^\*" | cut -d' ' -f 2)
+  changed_directories=$(git diff --name-only "master..$current_branch_name" | cut -d '/' -f 1 | sort -u)
+  log_detected_changes
+
+
+  # RUN TESTS IN CHANGED DIRECTORIES
+
+  for dir in $changed_directories; do
+    if [ "$(has_spec "$dir")" = true ]; then
+      eval "$(get_spec_path "$dir")"
+    else
+      error_no_specs "$dir"
+    fi
+  done
+
+  echo_all_done
+}
+
+
+function echo_all_done {
+  echo
+  echo
+  tput bold
+  tput setaf 2
+  echo "ALL DONE"
+  tput sgr0
+}
+
+
+function get_spec_path {
+  dir=$1
+  echo "$dir/bin/spec"
+}
+
+
+function error_no_specs {
+  dir=$1
+  tput bold
+  tput setaf 3
+  echo -n "WARNING: "
+  tput sgr0
+  echo -n "Project "
+  tput bold
+  echo -n "$dir"
+  tput sgr0
+  echo -n " has no tests, file "
+  tput bold
+  tput setaf 6
+  echo -n "$(get_spec_path "$dir")"
+  tput sgr0
+  echo " is missing"
+}
+
+
+function has_spec {
+  dir=$1
+  spec_path=$(get_spec_path "$dir")
+  if [ -e "$spec_path" ]; then
+    echo true
+  else
+    echo false
+  fi
+}
+
+
+function log_detected_changes {
+  echo "Detected changes in projects: "
+  for dir in $changed_directories; do
+    echo "- $dir"
+  done
+  echo
+}
+
+
+function exit_with_usage_instructions {
+  echo "Morula $VERSION"
+  echo
+  echo "Usage: "
+  tput bold
+  echo "        morula [main branch name]"
+  tput sgr0
+  echo
+  echo "Example: "
+  tput bold
+  echo "        morula master"
+  tput sgr0
+  exit 1
+}
+
+
+function exit_with_version {
+  echo "$VERSION"
+  exit
+}
+
+
+main "$@"
