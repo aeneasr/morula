@@ -105,7 +105,7 @@ for the code changes.
 
 Because of all these reasons,
 many complex open-source projects
-like React, Meteor, Ember, and Babel
+like [React](https://github.com/facebook/react), [Meteor](https://github.com/meteor/meteor), Ember, and [Babel](https://github.com/babel/babel)
 have moved toward an code base repository model that has
 all subprojects into the same repository, i.e. a _monorepository_.
 Doing so allows development to implement, review, and test changes
