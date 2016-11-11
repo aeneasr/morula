@@ -3,7 +3,7 @@
 > efficient testing for monorepos
 
 
-Monorepositories, or "monorepos" simply called, are repositories that contain multiple code bases that belong together.
+Monorepositories, or monorepos, are repositories that contain multiple code bases that belong together.
 They allow efficient work on a complex project
 that was broken up into several subprojects
 to make things more manageable.
@@ -26,15 +26,15 @@ This makes testing monorepos via a CI server easy, reliable and fast.
 
 ## Repo structure
 
-A monorepository using Morula, or a Morula monorepo, contains the subprojects located in top-level folders,
+A monorepository using Morula, also known as a Morula monorepo, contains the subprojects located in top-level folders,
 plus a Morula configuration file.
 Each subproject can be worked on by itself within its directory,
 and is versioned and released independent from the other subprojects.
 Each top-level folder subproject follow
-[o-tools](https://github.com/Originate/o-tools-node) conventions,
+[o-tools](https://github.com/Originate/o-tools-node) development structure conventions,
 meaning they contain a standardized set of scripts:
 - `bin/setup`: makes the subproject runnable, for example by installing dependencies
-- `bin/tests`: runs all tests for this subproject
+- `bin/spec`: runs all tests for this subproject
 
 
 ## Configuration file
