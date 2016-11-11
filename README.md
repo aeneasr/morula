@@ -5,7 +5,7 @@
 
 Monorepositories, or monorepos, are repositories that contain multiple code bases that belong together.
 They allow efficient work on a complex project
-that was broken up into several subprojects
+that is broken up into several subprojects
 to make things more manageable.
 
 Examples of popular monorepos are:
@@ -26,7 +26,7 @@ This makes testing monorepos via a CI server easy, reliable and fast.
 
 ## Repo structure
 
-A monorepository using Morula, also known as a Morula monorepo, contains the subprojects located in top-level folders,
+A monorepository using Morula, also referred to as a Morula monorepo, contains the subprojects located in top-level folders,
 plus a Morula configuration file.
 Each subproject can be worked on by itself within its directory,
 and is versioned and released independent from the other subprojects.
