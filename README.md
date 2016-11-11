@@ -40,7 +40,8 @@ meaning they contain a standardized set of scripts:
 ## Configuration file
 
 The config file is named `morula.yml` and
-defines which subprojects should be tested first/last,
+is located in the root of the monorepo.
+The configuration file defines which subprojects should be tested first/last,
 and which ones should always/never be tested independent of changes.
 
 __morula.yml__
@@ -63,10 +64,11 @@ never:
 
 - `morula test`:
   determines which folders contain changes
-  and runs the tests for only the respective subprojects.
+  and runs the tests for only the respective subprojects
+  based on the configuration file assertions.
 
 
-## Why Monorepos
+## Why Monorepos?
 
 Large monolithic code bases should be broken up
 into more manageable and reusable pieces.
@@ -77,7 +79,7 @@ Those are the straightforward cases.
 Problematic are the pieces that are more like _subprojects_ of the main project
 and should remain in the vicinity of the main project.
 
-Reasons in problem domain:
+Challenges:
 
 * There is currently not enough tool support
 to work with subprojects that live in their own repositories.
@@ -98,15 +100,15 @@ which is difficult to implement on CI servers.
 it is hard to keep it in sync with ongoing development,
 since documentation updates cannot be part of the pull requests
 for the code changes.
-More motivation in the
+* More motivation in the
 [monorepo design document of BabelJS](https://github.com/babel/babel/blob/master/doc/design/monorepo.md)
 
 Because of all these reasons,
 many complex open-source projects
 like React, Meteor, Ember, and Babel
-have moved towards an architecture that puts
+have moved toward an code base repository model that has
 all subprojects into the same repository, i.e. a _monorepository_.
-Doing so allows to implement, review, and test changes
+Doing so allows development to implement, review, and test changes
 in several subprojects together and thereby address all challenges mentioned above.
 
 
