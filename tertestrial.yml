@@ -1,0 +1,11 @@
+name: 'Golang: Cucumber (godog)'
+actions:
+
+  - match:
+      filename: '\.feature$'
+    command: 'go install ; godog {{filename}}'
+
+  - match:
+      filename: '\.feature$'
+      line: '\d+'
+    command: 'godog {{filename}}:{{line}}'
