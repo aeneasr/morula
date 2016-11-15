@@ -1,0 +1,18 @@
+machine:
+
+  environment:
+    PATH: "/home/ubuntu/.go_project/bin:$PATH"
+    GO_DIR: "$HOME/.go_project/src/github.com/Originate/morula"
+
+
+
+dependencies:
+
+  post:
+    - go get github.com/DATA-DOG/godog/cmd/godog
+
+
+test:
+
+  override:
+    - cd $GO_DIR && go install && godog

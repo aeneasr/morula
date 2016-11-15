@@ -2,6 +2,7 @@
 
 > efficient testing for monorepos
 
+[![CircleCI](https://circleci.com/gh/Originate/morula.svg?style=shield)](https://circleci.com/gh/Originate/morula)
 
 Monorepos are Git repositories that contain multiple code bases.
 Morula runs the tests for all subprojects in a monorepo.
