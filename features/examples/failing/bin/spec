@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+echo "This is the failing test for subproject 'one'"
+exit 1

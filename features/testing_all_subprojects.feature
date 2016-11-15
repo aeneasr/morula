@@ -7,9 +7,24 @@ Feature: testing all subprojects
   - running "morula test --all" tests all subprojects, even if they don't contain changes
 
 
-  Scenario: testing all subprojects
-    Given a project with the subprojects "one" and "two"
+  Scenario: all subprojects are passing
+    Given a project with the subprojects:
+      | NAME | TEMPLATE  |
+      | one  | passing_1 |
+      | two  | passing_2 |
     When running "morula test --all"
     Then it runs the tests:
       | one |
       | two |
+
+
+  Scenario: some subprojects are failing
+    Given a project with the subprojects:
+      | NAME  | TEMPLATE|
+      | works | passing |
+      | fails | failing |
+    When trying to run "morula test --all"
+    Then it fails with an error code and the message:
+      """
+      subproject fails is broken
+      """
