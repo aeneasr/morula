@@ -87,7 +87,7 @@ func testSubproject(subprojectName string, c Aurora) (result error) {
 	if result == nil {
 		fmt.Println("\n...", c.Bold(c.Green("success")), "!\n\n")
 	} else {
-		fmt.Println("\n... subproject", subprojectName, "is broken")
+		fmt.Println("\n... subproject", c.Bold(c.Cyan(subprojectName)), "is", c.Bold(c.Red("broken")))
 	}
 	return
 }
