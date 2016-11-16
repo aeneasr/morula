@@ -21,6 +21,16 @@ defined by the
 - `bin/spec`: runs all tests for this subproject
 
 
+## Commands
+
+- `morula setup`:
+  runs the `bin/setup` scripts for each subproject
+
+- `morula test`:
+  determines which folders contain changes
+  and runs the tests for only the respective subprojects.
+
+
 ## Configuration file (coming soon)
 
 The config file defines which subprojects should be tested first/last,
@@ -42,16 +52,6 @@ always:
 never:
   - website
 ```
-
-
-## Commands
-
-- `morula setup`:
-  runs the `bin/setup` scripts for each subproject
-
-- `morula test`:
-  determines which folders contain changes
-  and runs the tests for only the respective subprojects.
 
 
 ## Why Monorepos
