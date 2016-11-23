@@ -25,13 +25,11 @@ func FeatureContext(s *godog.Suite) {
 	// the error of the last run operation
 	var err error
 
-	s.BeforeScenario(func(interface{}) {
-		fmt.Println("BEFORE ALL")
-	})
-
-	s.AfterScenario(func(interface{}, error) {
-		fmt.Println("AFTER ALL")
-	})
+	// s.BeforeScenario(func(interface{}) {
+	// })
+	//
+	// s.AfterScenario(func(interface{}, error) {
+	// })
 
 	s.Step(`^a project with the subprojects:$`, func(projectData *gherkin.DataTable) error {
 		testRoot = createTempDir()
