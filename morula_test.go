@@ -73,13 +73,13 @@ func FeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^running "([^"]*)"$`, func(command string) (result error) {
-		output, result = run(command, testRoot)
+		output, result = run(strings.Split(command, " "), testRoot)
 		fmt.Println(output)
 		return
 	})
 
 	s.Step(`^trying to run "([^"]*)"$`, func(command string) (result error) {
-		output, err = run(command, testRoot)
+		output, err = run(strings.Split(command, " "), testRoot)
 		fmt.Println(output)
 		if err == nil {
 			result = errors.New("Expected failure, but command ran without errors")
@@ -112,10 +112,11 @@ func check(e error) {
 }
 
 // Runs the given command, returns its output
-func run(commandText string, dir string) (output string, err error) {
-	args := strings.Split(commandText, " ")
-	args = append(args, "--color=false")
-	command := exec.Command(args[0], args[1:]...)
+func run(commands []string, dir string) (output string, err error) {
+	if commands[0] == "morula" {
+		commands = append(commands, "--color=false")
+	}
+	command := exec.Command(commands[0], commands[1:]...)
 	command.Dir = dir
 	outputArray, err := command.CombinedOutput()
 	output = string(outputArray)
