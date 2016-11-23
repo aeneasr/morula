@@ -61,9 +61,11 @@ func getAurora(cmd *cobra.Command) Aurora {
 func getSubprojectNames() []string {
 	entries, err := ioutil.ReadDir(".")
 	check(err)
-	result := make([]string, len(entries))
-	for i, entry := range entries {
-		result[i] = entry.Name()
+	var result []string
+	for _, entry := range entries {
+		if entry.Name() != ".git" {
+			result = append(result, entry.Name())
+		}
 	}
 	return result
 }
