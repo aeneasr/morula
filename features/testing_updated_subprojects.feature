@@ -15,7 +15,7 @@ Feature: running a command only in updated subprojects
       | three | passing_2 |
     And I am on the "feature" branch
     And subprojects "one" and "three" have changes
-    When running "morula run --updated bin/spec"
+    When running "morula changed bin/spec"
     Then it runs that command in the directories:
       | one   |
       | three |
@@ -29,8 +29,32 @@ Feature: running a command only in updated subprojects
       | three | passing_2 |
     And I am on the "feature" branch
     And subprojects "one" and "two" have changes
-    When trying to run "morula run --updated bin/spec"
+    When trying to run "morula changed bin/spec"
     Then it fails with an error code and the message:
       """
       subproject two is broken
       """
+
+  Scenario: forgetting to provide the command
+    Given a project with the subprojects:
+      | NAME  | TEMPLATE|
+      | works | passing |
+    When trying to run "morula changed"
+    Then it fails with an error code and the message:
+      """
+      Please provide the command to run
+      """
+
+
+  Scenario: providing a command that doesn't exist
+    Given a project with the subprojects:
+      | NAME  | TEMPLATE|
+      | works | passing |
+    And I am on the "feature" branch
+    And subproject "works" has changes
+    When trying to run "morula changed zonk"
+    Then it fails with an error code and the message:
+      """
+      command zonk doesn't exist
+      """
+

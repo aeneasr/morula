@@ -25,10 +25,10 @@ plus a Morula configuration file.
 
 ## Commands
 
-- `morula run <command>`:
-  runs the given command in each subproject
+- `morula all <command>`:
+  runs the given command in every subproject
 
-- `morula run --updated <command>`:
+- `morula changed <command>`:
   runs the given command in the directories of the subprojects
   that contain changes compared to the master branch
 

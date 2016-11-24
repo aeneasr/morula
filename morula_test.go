@@ -88,6 +88,12 @@ func FeatureContext(s *godog.Suite) {
 		return
 	})
 
+	s.Step(`^subproject "([^"]*)" has changes$`, func(project1 string) error {
+		ioutil.WriteFile(filepath.Join(testRoot, project1, "change.txt"), []byte("hello"), 0644)
+		commitAllChanges(testRoot)
+		return nil
+	})
+
 	s.Step(`^subprojects "([^"]*)" and "([^"]*)" have changes$`, func(project1, project2 string) error {
 		ioutil.WriteFile(filepath.Join(testRoot, project1, "change.txt"), []byte("hello"), 0644)
 		ioutil.WriteFile(filepath.Join(testRoot, project2, "change.txt"), []byte("hello"), 0644)
