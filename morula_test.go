@@ -104,10 +104,10 @@ func FeatureContext(s *godog.Suite) {
 }
 
 func commitAllChanges(testRoot string) {
-	_, err := run([]string{"git", "add", "-A"}, testRoot)
-	check(err)
-	_, err = run([]string{"git", "commit", "-m", "changes"}, testRoot)
-	check(err)
+	output, err := run([]string{"git", "add", "-A"}, testRoot)
+	checkText(err, output)
+	output, err = run([]string{"git", "commit", "-m", "changes"}, testRoot)
+	checkText(err, output)
 }
 
 func createTempDir() (path string) {
@@ -133,17 +133,24 @@ func check(e error) {
 	}
 }
 
+func checkText(e error, text string) {
+	if e != nil {
+		fmt.Println(text)
+		panic(e)
+	}
+}
+
 func createMasterBranch(testRoot string) {
 	ioutil.WriteFile(filepath.Join(testRoot, "init.txt"), []byte("hello"), 0644)
-	_, err := run([]string{"git", "add", "-A"}, testRoot)
-	check(err)
-	_, err = run([]string{"git", "commit", "-m", "init"}, testRoot)
-	check(err)
+	output, err := run([]string{"git", "add", "-A"}, testRoot)
+	checkText(err, output)
+	output, err = run([]string{"git", "commit", "-m", "init"}, testRoot)
+	checkText(err, output)
 }
 
 func initializeGitRepo(testRoot string) {
-	_, err := run([]string{"git", "init", "."}, testRoot)
-	check(err)
+	output, err := run([]string{"git", "init", "."}, testRoot)
+	checkText(err, output)
 	createMasterBranch(testRoot)
 }
 
@@ -168,6 +175,6 @@ func splitProjectNames(projectNames string) (result []string) {
 }
 
 func switchBranch(branchName string, dir string) {
-	_, err := run([]string{"git", "checkout", "-b", branchName}, dir)
-	check(err)
+	output, err := run([]string{"git", "checkout", "-b", branchName}, dir)
+	checkText(err, output)
 }
