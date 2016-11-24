@@ -51,7 +51,7 @@ func FeatureContext(s *godog.Suite) {
 			return errors.New("Expected error, but test passed")
 		}
 		if !strings.Contains(output, expectedText.Content) {
-			return errors.New(fmt.Sprintf("Expected to see \"%s\" in \"%s\"", expectedText.Content, output))
+			return fmt.Errorf("Expected to see \"%s\" in \"%s\"", expectedText.Content, output)
 		}
 		return nil
 	})

@@ -20,14 +20,15 @@ Check out the list of [things to do](issues) to get started.
 - install the dependencies:
 
   ```
-  $ go get github.com/Masterminds/glide
+  $ go get github.com/Masterminds/glide github.com/golang/lint/golint
   $ glide install
   ```
 
 
 ## Development
 - run the application: `go run main.go`
-- run the tests: `bin/spec`
+- run all tests: `bin/spec`
+- run only the linter: `bin/lint`
 - compile a binary for the local machine: `go install`
 
 

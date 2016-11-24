@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"fmt"
-	. "github.com/logrusorgru/aurora"
+	"github.com/logrusorgru/aurora"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -66,10 +66,10 @@ func check(e error) {
 	}
 }
 
-func getAurora(cmd *cobra.Command) Aurora {
+func getAurora(cmd *cobra.Command) aurora.Aurora {
 	color, err := cmd.Flags().GetBool("color")
 	check(err)
-	return NewAurora(color)
+	return aurora.NewAurora(color)
 }
 
 func getSubprojectNames() []string {
@@ -116,7 +116,7 @@ func getCurrentBranchName() string {
 	panic("no current branch found")
 }
 
-func runInSubproject(subprojectName string, commands []string, c Aurora) (err error) {
+func runInSubproject(subprojectName string, commands []string, c aurora.Aurora) (err error) {
 
 	// determine command to run
 	command := strings.Join(commands, " ")
@@ -143,6 +143,6 @@ func runInSubproject(subprojectName string, commands []string, c Aurora) (err er
 		return err
 	}
 
-	fmt.Println("\n...", c.Bold(c.Green("success")), "!\n\n")
+	fmt.Print("\n...", c.Bold(c.Green("success")), "!\n\n\n")
 	return
 }
