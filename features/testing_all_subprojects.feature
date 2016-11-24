@@ -1,19 +1,19 @@
-Feature: testing all subprojects
+Feature: running a command in all subprojects
 
   As a developer
-  I want to be able to run all tests irrespective of changes
-  So that I can be sure the test status for my main development branch indicates broken subprojects that I didn't work on in my current change.
+  I want to be able to run a command in all subprojects irrespective of changes
+  So that the test status on the main development branch shows broken subprojects even if they weren't modified.
 
-  - running "morula test --all" tests all subprojects, even if they don't contain changes
+  - "morula run <command>" runs the given command in all subprojects
 
 
-  Scenario: all subprojects are passing
+  Scenario: all subprojects work
     Given a project with the subprojects:
       | NAME | TEMPLATE  |
       | one  | passing_1 |
       | two  | passing_2 |
-    When running "morula test --all"
-    Then it runs the tests:
+    When running "morula run bin/spec"
+    Then it runs that command in the directories:
       | one |
       | two |
 
@@ -23,8 +23,31 @@ Feature: testing all subprojects
       | NAME  | TEMPLATE|
       | works | passing |
       | fails | failing |
-    When trying to run "morula test --all"
+    When trying to run "morula run bin/spec"
     Then it fails with an error code and the message:
       """
       subproject fails is broken
       """
+
+
+  Scenario: forgetting to provide the command
+    Given a project with the subprojects:
+      | NAME  | TEMPLATE|
+      | works | passing |
+    When trying to run "morula run"
+    Then it fails with an error code and the message:
+      """
+      Please provide the command to run
+      """
+
+
+  Scenario: providing a command that doesn't exist
+    Given a project with the subprojects:
+      | NAME  | TEMPLATE|
+      | works | passing |
+    When trying to run "morula run zonk"
+    Then it fails with an error code and the message:
+      """
+      command zonk doesn't exist
+      """
+

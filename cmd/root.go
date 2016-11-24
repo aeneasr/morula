@@ -13,11 +13,10 @@ var cfgFile string
 // RootCmd represents the base command when called without any subcommands
 var RootCmd = &cobra.Command{
 	Use:   "morula",
-	Short: "Optimizing test runner for monorepositories",
-	Long: `Morula runs the tests of the projects within a monorepository.
+	Short: "Optimizing task runner for monorepositories",
+	Long: `Morula runs tasks in all subprojects of a monorepository.
 
-The projects should be located in top-level folders,
-and contain a "bin/spec" executable`,
+The individual subprojects should be located in top-level folders.`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	//	Run: func(cmd *cobra.Command, args []string) { },

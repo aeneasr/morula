@@ -2,21 +2,15 @@
 
 [![CircleCI](https://circleci.com/gh/Originate/morula.svg?style=shield)](https://circleci.com/gh/Originate/morula)
 
-Monorepos are Git repositories that contain multiple code bases.
-Morula runs the tests for all subprojects in a monorepo.
-Optionally only for the code bases that contain changes.
-This makes testing monorepos easy, reliable, and fast.
+Monorepos are Git repositories that contain multiple code bases,
+typically for subprojects of the project in the repo.
+Morula runs tasks for all those subprojects within a monorepo.
 
 
 ## Repo structure
 
 Your monorepository should contain the subprojects in top-level folders,
 plus a Morula configuration file.
-The subprojects must contain a standardized set of scripts
-defined by the
-[o-tools](https://github.com/Originate/o-tools-node) convention:
-- `bin/setup`: makes the subproject runnable, for example by installing dependencies
-- `bin/spec`: runs all tests for this subproject
 
 
 ## Commands
@@ -24,9 +18,8 @@ defined by the
 - `morula setup`:
   runs the `bin/setup` scripts for each subproject
 
-- `morula test`:
-  determines which folders contain changes
-  and runs the tests for only the respective subprojects.
+- `morula run <command>`:
+  runs the given command in the directories of the subprojects
 
 
 ## Configuration file (coming soon)

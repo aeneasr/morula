@@ -49,7 +49,7 @@ func FeatureContext(s *godog.Suite) {
 		return nil
 	})
 
-	s.Step(`^it runs the tests:$`, func(tests *gherkin.DataTable) (result error) {
+	s.Step(`^it runs that command in the directories:$`, func(tests *gherkin.DataTable) (result error) {
 
 		// determine the names of the projects we expect to be tested
 		var expectedProjectNames []string
@@ -58,7 +58,7 @@ func FeatureContext(s *godog.Suite) {
 		}
 
 		// determine the projects morula has actually tested
-		re := regexp.MustCompile(`testing subproject (.*) \.\.\.`)
+		re := regexp.MustCompile(`running .* in subproject (.*) \.\.\.`)
 		matches := re.FindAllStringSubmatch(output, -1)
 		var actualProjectNames = make([]string, len(matches))
 		for i, match := range matches {
