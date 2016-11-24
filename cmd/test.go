@@ -14,8 +14,8 @@ import (
 // testCmd represents the test command
 var testCmd = &cobra.Command{
 	Use:   "test",
-	Short: "Runs the tests in the subrepositories",
-	Long:  `This command runs the tests in all subrepositories.`,
+	Short: "Runs the tests in the subprojects",
+	Long:  `This command runs the tests in all subprojects.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		c := getAurora(cmd)
 		for _, subprojectName := range getSubprojectNames() {
