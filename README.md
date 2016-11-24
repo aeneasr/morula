@@ -9,6 +9,13 @@ Optionally only for the ones that contain changes.
 This makes running administrative tasks on code bases in monorepos easy, reliable, and fast.
 
 
+## Installation
+
+Download the appropriate binary for your platform from the
+[release page](https://github.com/Originate/morula/releases/latest)
+and save it somewhere in your PATH.
+
+
 ## Repo structure
 
 Your monorepository should contain the subprojects in top-level folders,
