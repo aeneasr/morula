@@ -8,4 +8,4 @@ actions:
   - match:
       filename: '\.feature$'
       line: '\d+'
-    command: 'godog {{filename}}:{{line}}'
+    command: 'go install ; godog {{filename}}:{{line}}'
