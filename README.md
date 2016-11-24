@@ -1,6 +1,4 @@
-# Morula
-
-> efficient testing for monorepos
+<img src="documentation/logo.png" width="600" height="111" alt="Morula logo">
 
 [![CircleCI](https://circleci.com/gh/Originate/morula.svg?style=shield)](https://circleci.com/gh/Originate/morula)
 
