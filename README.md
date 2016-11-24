@@ -5,6 +5,8 @@
 Monorepos are Git repositories that contain multiple code bases,
 typically for subprojects of the project in the repo.
 Morula runs tasks for all those subprojects within a monorepo.
+Optionally only for the ones that contain changes.
+This makes running administrative tasks on code bases in monorepos easy, reliable, and fast.
 
 
 ## Repo structure
@@ -43,6 +45,8 @@ always:
 never:
   - website
 ```
+
+Certain directories like `.git` are always ignored.
 
 
 ## Why Monorepos
@@ -92,4 +96,3 @@ in several subprojects together and thereby address all challenges mentioned abo
 __[Lerna](https://github.com/lerna/lerna)__
 - only works if all subprojects are NPM packages
 - enforces an unnecessarily nested directory structure
-

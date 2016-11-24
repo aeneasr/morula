@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"sort"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -24,7 +25,15 @@ var runCmd = &cobra.Command{
 			fmt.Println(cmd.UsageString())
 			os.Exit(1)
 		}
-		for _, subprojectName := range getSubprojectNames() {
+		onlyUpdated, err := cmd.Flags().GetBool("updated")
+		check(err)
+		var projectsToRun []string
+		if onlyUpdated {
+			projectsToRun = getChangedSubprojectNames()
+		} else {
+			projectsToRun = getSubprojectNames()
+		}
+		for _, subprojectName := range projectsToRun {
 			err := runInSubproject(subprojectName, args, c)
 			if err != nil {
 				os.Exit(1)
@@ -45,8 +54,7 @@ func init() {
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	runCmd.Flags().BoolP("all", "a", false, "test all subprojects")
-
+	runCmd.Flags().BoolP("updated", "u", false, "run only in subprojects that contain updates")
 }
 
 // HELPER FUNCTIONS
@@ -69,11 +77,43 @@ func getSubprojectNames() []string {
 	check(err)
 	var result []string
 	for _, entry := range entries {
-		if entry.Name() != ".git" {
+		if entry.IsDir() && entry.Name() != ".git" {
 			result = append(result, entry.Name())
 		}
 	}
 	return result
+}
+
+func getChangedSubprojectNames() (result []string) {
+	// Due to the lack of array methods like "uniq" in Golang,
+	// this method iterates the filenames sorted alphabetically
+	// and only appends the resulting project name to the result if the last element isn't it.
+	currentBranchName := getCurrentBranchName()
+	out, err := exec.Command("git", "diff", "--name-only", fmt.Sprintf("master..%s", currentBranchName)).Output()
+	check(err)
+	filePaths := strings.Split(string(out), "\n")
+	sort.Strings(filePaths)
+	for _, filePath := range filePaths {
+		filePath = strings.Trim(filePath, " ")
+		if len(filePath) > 0 {
+			projectName := strings.Split(filePath, string(os.PathSeparator))[0]
+			if len(result) == 0 || result[len(result)-1] != projectName {
+				result = append(result, projectName)
+			}
+		}
+	}
+	return result
+}
+
+func getCurrentBranchName() string {
+	out, err := exec.Command("git", "branch").Output()
+	check(err)
+	for _, line := range strings.Split(string(out), "\n") {
+		if line[0] == '*' {
+			return strings.Trim(line[2:], " ")
+		}
+	}
+	panic("no current branch found")
 }
 
 func runInSubproject(subprojectName string, commands []string, c Aurora) (err error) {

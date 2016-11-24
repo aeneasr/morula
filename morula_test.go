@@ -33,9 +33,16 @@ func FeatureContext(s *godog.Suite) {
 
 	s.Step(`^a project with the subprojects:$`, func(projectData *gherkin.DataTable) error {
 		testRoot = createTempDir()
+		initializeGitRepo(testRoot)
 		for _, project := range projectData.Rows[1:] {
 			createTestProject(project.Cells[1].Value, project.Cells[0].Value, testRoot)
 		}
+		commitAllChanges(testRoot)
+		return nil
+	})
+
+	s.Step(`^I am on the "([^"]*)" branch$`, func(branchName string) error {
+		switchBranch(branchName, testRoot)
 		return nil
 	})
 
@@ -78,6 +85,13 @@ func FeatureContext(s *godog.Suite) {
 		return
 	})
 
+	s.Step(`^subprojects "([^"]*)" and "([^"]*)" have changes$`, func(project1, project2 string) error {
+		ioutil.WriteFile(filepath.Join(testRoot, project1, "change.txt"), []byte("hello"), 0644)
+		ioutil.WriteFile(filepath.Join(testRoot, project2, "change.txt"), []byte("hello"), 0644)
+		commitAllChanges(testRoot)
+		return nil
+	})
+
 	s.Step(`^trying to run "([^"]*)"$`, func(command string) (result error) {
 		output, err = run(strings.Split(command, " "), testRoot)
 		fmt.Println(output)
@@ -89,8 +103,16 @@ func FeatureContext(s *godog.Suite) {
 
 }
 
+func commitAllChanges(testRoot string) {
+	_, err := run([]string{"git", "add", "-A"}, testRoot)
+	check(err)
+	_, err = run([]string{"git", "commit", "-m", "changes"}, testRoot)
+	check(err)
+}
+
 func createTempDir() (path string) {
 	dir, err := ioutil.TempDir("", "morula")
+	fmt.Println(dir)
 	check(err)
 	return dir
 }
@@ -111,6 +133,20 @@ func check(e error) {
 	}
 }
 
+func createMasterBranch(testRoot string) {
+	ioutil.WriteFile(filepath.Join(testRoot, "init.txt"), []byte("hello"), 0644)
+	_, err := run([]string{"git", "add", "-A"}, testRoot)
+	check(err)
+	_, err = run([]string{"git", "commit", "-m", "init"}, testRoot)
+	check(err)
+}
+
+func initializeGitRepo(testRoot string) {
+	_, err := run([]string{"git", "init", "."}, testRoot)
+	check(err)
+	createMasterBranch(testRoot)
+}
+
 // Runs the given command, returns its output
 func run(commands []string, dir string) (output string, err error) {
 	if commands[0] == "morula" {
@@ -129,4 +165,9 @@ func splitProjectNames(projectNames string) (result []string) {
 		result = append(result, strings.Trim(projectName, " \""))
 	}
 	return
+}
+
+func switchBranch(branchName string, dir string) {
+	_, err := run([]string{"git", "checkout", "-b", branchName}, dir)
+	check(err)
 }

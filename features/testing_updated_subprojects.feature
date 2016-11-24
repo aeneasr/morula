@@ -1,0 +1,36 @@
+Feature: running a command only in updated subprojects
+
+  As a developer
+  I want to be able to run a command only in subprojects that I have made modifications to
+  So that I can test my changes as quickly as possible.
+
+  - "morula run --updated <command>" runs the given command in all subprojects that contain changes
+
+
+  Scenario: all tested subprojects are passing
+    Given a project with the subprojects:
+      | NAME  | TEMPLATE  |
+      | one   | passing_1 |
+      | two   | failing   |
+      | three | passing_2 |
+    And I am on the "feature" branch
+    And subprojects "one" and "three" have changes
+    When running "morula run --updated bin/spec"
+    Then it runs that command in the directories:
+      | one   |
+      | three |
+
+
+  Scenario: some tested subprojects are failing
+    Given a project with the subprojects:
+      | NAME  | TEMPLATE  |
+      | one   | passing_1 |
+      | two   | failing   |
+      | three | passing_2 |
+    And I am on the "feature" branch
+    And subprojects "one" and "two" have changes
+    When trying to run "morula run --updated bin/spec"
+    Then it fails with an error code and the message:
+      """
+      subproject two is broken
+      """
