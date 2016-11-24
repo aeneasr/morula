@@ -3,9 +3,11 @@ language: go
 go:
   - 1.7
 
+
 before_install:
   - git config --global user.email "you@example.com"
   - git config --global user.name "Your Name"
+
 
 install:
   - go get github.com/Masterminds/glide
@@ -14,16 +16,12 @@ install:
 
 
 script:
-  # - |-
-  #   touch ./coverage.tmp && echo 'mode: atomic' > coverage.txt && go list ./... | grep -v /vendor | xargs -n1 -I{} sh -c 'go test -covermode=atomic -coverprofile=coverage.tmp -coverpkg $(go list ./... | grep -v /vendor | tr "\n" ",") {} && tail -n +2 coverage.tmp >> coverage.txt' && rm coverage.tmp
-  # - goveralls -coverprofile="coverage.txt"
-  # - go test -race $(go list ./... | grep -v /vendor | grep -v /cmd)
-  # - go test -v -bench=.* -run=none $(glide novendor)
   - go test
 
 
 after_success:
   - bin/build_on_travis
+
 
 deploy:
   provider: releases
