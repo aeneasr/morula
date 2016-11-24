@@ -10,7 +10,6 @@ before_install:
 install:
   - go get github.com/Masterminds/glide
   - glide install
-  - go get github.com/DATA-DOG/godog/cmd/godog
   - go install
 
 
@@ -20,7 +19,7 @@ script:
   # - goveralls -coverprofile="coverage.txt"
   # - go test -race $(go list ./... | grep -v /vendor | grep -v /cmd)
   # - go test -v -bench=.* -run=none $(glide novendor)
-  - godog
+  - go test
 
 
 after_success:

@@ -8,12 +8,15 @@ import (
 	"github.com/kr/pretty"
 	"github.com/termie/go-shutil"
 	"io/ioutil"
+	"os"
 	"os/exec"
 	"path/filepath"
 	"regexp"
 	"strings"
+	"testing"
 )
 
+// Cucumber step definitions
 func FeatureContext(s *godog.Suite) {
 
 	// the temp dir in which the test repos live
@@ -177,4 +180,23 @@ func splitProjectNames(projectNames string) (result []string) {
 func switchBranch(branchName string, dir string) {
 	output, err := run([]string{"git", "checkout", "-b", branchName}, dir)
 	checkText(err, output)
+}
+
+func TestMain(m *testing.M) {
+	var paths []string
+	if len(os.Args) == 2 {
+		paths = append(paths, strings.Split(os.Args[1], "=")[1])
+	} else {
+		paths = append(paths, "features")
+	}
+	status := godog.RunWithOptions("godogs", func(s *godog.Suite) {
+		FeatureContext(s)
+	}, godog.Options{
+		Format:        "pretty",
+		NoColors:      false,
+		StopOnFailure: true,
+		Paths:         paths,
+	})
+
+	os.Exit(status)
 }
