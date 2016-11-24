@@ -7,10 +7,12 @@ before_install:
   - git config --global user.email "you@example.com"
   - git config --global user.name "Your Name"
 
-# install:
+install:
 #   # - go got github.com/mitchellh/gox
-#   # - go get github.com/Masterminds/glide
-#   # - glide install
+  - go get github.com/Masterminds/glide
+  - glide install
+  - go get github.com/DATA-DOG/godog/cmd/godog
+  - go install
 #   - go build
 #   - go install github.com/Originate/morula
 #   - go get github.com/DATA-DOG/godog/cmd/godog
@@ -22,8 +24,6 @@ script:
   # - goveralls -coverprofile="coverage.txt"
   # - go test -race $(go list ./... | grep -v /vendor | grep -v /cmd)
   # - go test -v -bench=.* -run=none $(glide novendor)
-  - go install
-  - go get github.com/DATA-DOG/godog/cmd/godog
   - godog
 
 

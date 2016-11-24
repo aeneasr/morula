@@ -1,0 +1,12 @@
+package: github.com/Originate/morula
+import:
+- package: github.com/logrusorgru/aurora
+- package: github.com/spf13/cobra
+- package: github.com/spf13/viper
+testImport:
+- package: github.com/DATA-DOG/godog
+  version: v0.6.1
+  subpackages:
+  - gherkin
+- package: github.com/kr/pretty
+- package: github.com/termie/go-shutil
