@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"github.com/logrusorgru/aurora"
+	"github.com/mattn/go-shellwords"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -138,7 +139,9 @@ func runInSubproject(subprojectName string, commands []string, c aurora.Aurora) 
 
 	// run the command
 	fmt.Printf("running %s in subproject %s ...\n\n", c.Bold(c.Cyan(command)), c.Bold(c.Cyan(subprojectName)))
-	cmd := exec.Command(command)
+	words, err := shellwords.Parse(command)
+	check(err)
+	cmd := exec.Command(words[0], words[1:]...)
 	cmd.Dir = dir
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr

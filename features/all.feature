@@ -5,6 +5,7 @@ Feature: running a command in all subprojects
   So that the test status on the main development branch shows broken subprojects even if they weren't modified.
 
   - "morula run <command>" runs the given command in all subprojects
+  - command that contain command-line flags must be provided as a string
 
 
   Scenario: all subprojects work
@@ -13,6 +14,17 @@ Feature: running a command in all subprojects
       | one  | passing_1 |
       | two  | passing_2 |
     When running "morula all bin/spec"
+    Then it runs that command in the directories:
+      | one |
+      | two |
+
+
+  Scenario: calling a command with command-line arguments
+    Given a project with the subprojects:
+      | NAME | TEMPLATE  |
+      | one  | passing_1 |
+      | two  | passing_2 |
+    When running "morula all 'ls -la'"
     Then it runs that command in the directories:
       | one |
       | two |
@@ -50,4 +62,3 @@ Feature: running a command in all subprojects
       """
       command zonk doesn't exist
       """
-

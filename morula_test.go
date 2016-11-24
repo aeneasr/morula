@@ -6,6 +6,7 @@ import (
 	"github.com/DATA-DOG/godog"
 	"github.com/DATA-DOG/godog/gherkin"
 	"github.com/kr/pretty"
+	"github.com/mattn/go-shellwords"
 	"github.com/termie/go-shutil"
 	"io/ioutil"
 	"os"
@@ -83,7 +84,9 @@ func FeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^running "([^"]*)"$`, func(command string) (result error) {
-		output, result = run(strings.Split(command, " "), testRoot)
+		words, err := shellwords.Parse(command)
+		check(err)
+		output, result = run(words, testRoot)
 		fmt.Println(output)
 		return
 	})
@@ -121,7 +124,6 @@ func commitAllChanges(testRoot string) {
 
 func createTempDir() (path string) {
 	dir, err := ioutil.TempDir("", "morula")
-	fmt.Println(dir)
 	check(err)
 	return dir
 }

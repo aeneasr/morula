@@ -21,6 +21,20 @@ Feature: running a command only in updated subprojects
       | three |
 
 
+  Scenario: calling a command with command-line arguments
+    Given a project with the subprojects:
+      | NAME  | TEMPLATE  |
+      | one   | passing_1 |
+      | two   | failing   |
+      | three | passing_2 |
+    And I am on the "feature" branch
+    And subprojects "one" and "three" have changes
+    When running "morula changed 'ls -la'"
+    Then it runs that command in the directories:
+      | one   |
+      | three |
+
+
   Scenario: some tested subprojects are failing
     Given a project with the subprojects:
       | NAME  | TEMPLATE  |
@@ -57,4 +71,3 @@ Feature: running a command only in updated subprojects
       """
       command zonk doesn't exist
       """
-

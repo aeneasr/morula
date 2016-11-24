@@ -1,5 +1,5 @@
-hash: e5328c405df19c498618e71525d80653115fcef96fb380d78b86246e9c2f0d87
-updated: 2016-11-24T08:46:44.543245884-08:00
+hash: 19ce246d5d978a759357031946935f16f5bbf897a4c8b7802516670a71436945
+updated: 2016-11-24T15:13:56.938140067-08:00
 imports:
 - name: github.com/fsnotify/fsnotify
   version: fd9ec7deca8bf46ecd2a795baaacf2b3a9be1197
@@ -20,6 +20,8 @@ imports:
   version: e669f2c22bc605420e0a2f759ec43ea235ba02d2
 - name: github.com/magiconair/properties
   version: 0723e352fa358f9322c938cc2dadda874e9151a9
+- name: github.com/mattn/go-shellwords
+  version: f4e566c536cf69158e808ec28ef4182a37fdc981
 - name: github.com/mitchellh/mapstructure
   version: f3009df150dadf309fdee4a54ed65c124afad715
 - name: github.com/pelletier/go-buffruneio
