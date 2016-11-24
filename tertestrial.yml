@@ -2,6 +2,9 @@ name: 'Golang: Cucumber (godog)'
 actions:
 
   - match:
+    command: 'go install ; godog'
+
+  - match:
       filename: '\.feature$'
     command: 'go install ; godog {{filename}}'
 
