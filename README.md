@@ -25,11 +25,12 @@ plus a Morula configuration file.
 
 ## Commands
 
-- `morula setup`:
-  runs the `bin/setup` scripts for each subproject
-
 - `morula run <command>`:
+  runs the given command in each subproject
+
+- `morula run --updated <command>`:
   runs the given command in the directories of the subprojects
+  that contain changes compared to the master branch
 
 
 ## Configuration file (coming soon)
