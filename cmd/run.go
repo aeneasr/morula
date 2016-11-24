@@ -17,7 +17,7 @@ import (
 var runCmd = &cobra.Command{
 	Use:   "run <command to run>",
 	Short: "Runs the given command in the folders of subprojects",
-	Long:  `This command runs the given commmand in the folders of subprojects.`,
+	Long:  `This command runs the given command in the folders of subprojects.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		c := getAurora(cmd)
 		if len(args) == 0 {

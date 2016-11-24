@@ -1,7 +1,7 @@
 <img src="documentation/logo.png" width="600" height="111" alt="Morula logo">
 
 [![Build Status](https://travis-ci.org/Originate/morula.svg?branch=master)](https://travis-ci.org/Originate/morula)
-[![Code Climate](https://codeclimate.com/repos/58374779b042c73a170058db/badges/2d9c646e397bc2bf1fd3/gpa.svg)](https://codeclimate.com/repos/58374779b042c73a170058db/feed)
+[![Go Report Card](https://goreportcard.com/badge/github.com/Originate/morula)](https://goreportcard.com/report/github.com/Originate/morula)
 
 Monorepos are Git repositories that contain multiple code bases,
 typically for subprojects of the project in the repo.
