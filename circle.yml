@@ -11,6 +11,8 @@ machine:
     - sudo rm -rf /usr/local/go
     - sudo tar -C /usr/local -xzf download/$GODIST
     - go version
+    - git config --global user.email "morula-tester@originate.com"
+    - git config --global user.name "Morula Tester"
 
 
 dependencies:
