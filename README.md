@@ -33,31 +33,6 @@ plus a Morula configuration file.
   that contain changes compared to the master branch
 
 
-## Configuration file (coming soon)
-
-The config file defines which subprojects should be tested first/last,
-and which ones should always/never be tested independent of changes.
-
-__morula.yml__
-```yml
-main-branch-name: master
-
-before-all:
-  - shared
-
-after-all:
-  - e2e
-
-always:
-  - e2e
-
-never:
-  - website
-```
-
-Certain directories like `.git` are always ignored.
-
-
 ## Why Monorepos
 
 Large monolithic code bases should be broken up
