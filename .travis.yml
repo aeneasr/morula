@@ -1,0 +1,42 @@
+language: go
+
+go:
+  - 1.7
+
+before_install:
+  - git config --global user.email "you@example.com"
+  - git config --global user.name "Your Name"
+
+# install:
+#   # - go got github.com/mitchellh/gox
+#   # - go get github.com/Masterminds/glide
+#   # - glide install
+#   - go build
+#   - go install github.com/Originate/morula
+#   - go get github.com/DATA-DOG/godog/cmd/godog
+
+
+script:
+  # - |-
+  #   touch ./coverage.tmp && echo 'mode: atomic' > coverage.txt && go list ./... | grep -v /vendor | xargs -n1 -I{} sh -c 'go test -covermode=atomic -coverprofile=coverage.tmp -coverpkg $(go list ./... | grep -v /vendor | tr "\n" ",") {} && tail -n +2 coverage.tmp >> coverage.txt' && rm coverage.tmp
+  # - goveralls -coverprofile="coverage.txt"
+  # - go test -race $(go list ./... | grep -v /vendor | grep -v /cmd)
+  # - go test -v -bench=.* -run=none $(glide novendor)
+  - go install
+  - go get github.com/DATA-DOG/godog/cmd/godog
+  - godog
+
+
+# after_success:
+#   - |-
+#     [ "${TRAVIS_TAG}" != "" ] && [ "${TRAVIS_GO_VERSION}" == "1.7" ] && gox -ldflags "-X github.com/Originate/morula/cmd.Version=`git describe --tags` -X github.com/Originate/morula/cmd.BuildTime=`TZ=UTC date -u '+%Y-%m-%dT%H:%M:%SZ'` -X github.com/Originate/morula/cmd.GitHash=`git rev-parse HEAD`" -output "dist/{{.Dir}}-{{.OS}}-{{.Arch}}"
+#
+# deploy:
+#   provider: releases
+#   file_glob: true
+#   api_key: "$GITHUB_TOKEN"
+#   file: "dist/*"
+#   skip_cleanup: true
+#     on:
+#       tags: true
+#       go: 1.7

@@ -1,6 +1,6 @@
 <img src="documentation/logo.png" width="600" height="111" alt="Morula logo">
 
-[![CircleCI](https://circleci.com/gh/Originate/morula.svg?style=shield)](https://circleci.com/gh/Originate/morula)
+[![Build Status](https://travis-ci.org/Originate/morula.svg?branch=master)](https://travis-ci.org/Originate/morula)
 
 Monorepos are Git repositories that contain multiple code bases,
 typically for subprojects of the project in the repo.
