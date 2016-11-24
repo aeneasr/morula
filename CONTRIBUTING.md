@@ -1,33 +1,39 @@
 # Morula Developer Documentation
 
+Contributions to Morula are welcome!
+Check out the list of [things to do](issues) to get started.
+
 
 ## Set up dev machine
 
-We want to check in code via Git,
-so we have to clone the repo using SSH here:
+- install [Go](https://golang.org)
 
-```
-$ cd $GOPATH/src/github.com/Originate
-$ git clone git@github.com:Originate/morula.git
-```
+- add `./bin` to your PATH
 
-Install the dependencies:
+- clone the code base:
 
-```
-$ go get github.com/Masterminds/glide
-$ glide install
-```
+  ```
+  $ cd $GOPATH/src/github.com/Originate
+  $ git clone git@github.com:Originate/morula.git
+  ```
+
+- install the dependencies:
+
+  ```
+  $ go get github.com/Masterminds/glide
+  $ glide install
+  ```
 
 
 ## Development
-- compile and run the application: `go run main.go`
+- run the application: `go run main.go`
 - run the tests: `bin/spec`
 - compile a binary for the local machine: `go install`
 
 
 ## Updating
 
-To update dependencies, run:
+To update dependencies:
 
 ```
 $ glide up
@@ -37,6 +43,12 @@ $ glide up
 ## Releasing
 
 To publish a new version:
+
+```
+$ publish <version>
+```
+
+If you want to do it manually:
 
 ```
 $ git tag -a <version> -m <version>
