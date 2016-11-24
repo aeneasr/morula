@@ -32,3 +32,18 @@ To update dependencies, run:
 ```
 $ glide up
 ```
+
+
+## Releasing
+
+To publish a new version:
+
+```
+$ git tag -a <version> -m <version>
+$ git push --tags
+```
+
+When Travis-CI works on a Git tag,
+it calls `bin/build_on_travis` and then
+deploys the binaries into a GitHub release
+via the `deploy` section in [travis.yml](.travis.yml).
