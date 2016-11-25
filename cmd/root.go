@@ -3,11 +3,11 @@ package cmd
 import (
 	"fmt"
 	"github.com/logrusorgru/aurora"
-	"github.com/mattn/go-shellwords"
 	"io/ioutil"
 	"os"
 	"os/exec"
 	"path"
+	"runtime"
 	"sort"
 	"strings"
 
@@ -107,7 +107,7 @@ func getChangedSubprojectNames() (result []string) {
 	for _, filePath := range filePaths {
 		filePath = strings.Trim(filePath, " ")
 		if len(filePath) > 0 {
-			projectName := strings.Split(filePath, string(os.PathSeparator))[0]
+			projectName := strings.Split(filePath, "/")[0] // Git always returns "/" even on Windows
 			if len(result) == 0 || result[len(result)-1] != projectName {
 				result = append(result, projectName)
 			}
@@ -139,20 +139,20 @@ func runInSubproject(subprojectName string, commands []string, c aurora.Aurora) 
 
 	// run the command
 	fmt.Printf("running %s in subproject %s ...\n\n", c.Bold(c.Cyan(command)), c.Bold(c.Cyan(subprojectName)))
-	words, err := shellwords.Parse(command)
-	check(err)
-	cmd := exec.Command(words[0], words[1:]...)
+	var cmd *exec.Cmd
+	if runtime.GOOS == "windows" {
+		cmd = exec.Command("cmd", "/C", command)
+	} else {
+		cmd = exec.Command("bash", "-c", command)
+	}
 	cmd.Dir = dir
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	err = cmd.Start()
-	if err != nil {
-		fmt.Printf("command %s doesn't exist\n", command)
-		return err
-	}
+	check(err) // this error should always be nil, since we call the command shell which always exists
 	err = cmd.Wait()
 	if err != nil {
-		fmt.Printf("subproject %s is broken\n", subprojectName)
+		fmt.Printf("subproject %s has issues\n", subprojectName)
 		return err
 	}
 

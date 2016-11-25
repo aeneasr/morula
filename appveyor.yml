@@ -1,0 +1,22 @@
+version: "{build}"
+
+os: Windows Server 2012 R2
+
+clone_folder: c:\gopath\src\github.com\Originate\morula
+
+environment:
+  GOPATH: c:\gopath
+
+install:
+  - set PATH=%GOPATH%\bin;%PATH%
+  - go version
+  - go get github.com/Masterminds/glide
+  - glide install
+  - git config --global user.email "you@example.com"
+  - git config --global user.name "Your Name"
+
+test_script:
+  - bin\spec
+
+build: off
+deploy: off

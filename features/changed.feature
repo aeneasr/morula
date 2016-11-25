@@ -46,7 +46,7 @@ Feature: running a command only in updated subprojects
     When trying to run "morula changed bin/spec"
     Then it fails with an error code and the message:
       """
-      subproject two is broken
+      subproject two has issues
       """
 
   Scenario: forgetting to provide the command
@@ -69,5 +69,5 @@ Feature: running a command only in updated subprojects
     When trying to run "morula changed zonk"
     Then it fails with an error code and the message:
       """
-      command zonk doesn't exist
+      subproject works has issues
       """

@@ -84,6 +84,7 @@ func FeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^running "([^"]*)"$`, func(command string) (result error) {
+		command = makeCrossPlatformCommand(command)
 		words, err := shellwords.Parse(command)
 		check(err)
 		output, result = run(words, testRoot)
@@ -105,6 +106,7 @@ func FeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^trying to run "([^"]*)"$`, func(command string) (result error) {
+		command = makeCrossPlatformCommand(command)
 		output, err = run(strings.Split(command, " "), testRoot)
 		fmt.Println(output)
 		if err == nil {
@@ -163,6 +165,14 @@ func initializeGitRepo(testRoot string) {
 	output, err := run([]string{"git", "init", "."}, testRoot)
 	checkText(err, output)
 	createMasterBranch(testRoot)
+}
+
+func makeCrossPlatformCommand(command string) string {
+	if os.PathSeparator == '\\' {
+		command = strings.Replace(command, "/", "\\\\", -1)
+		command = strings.Replace(command, "bin\\spec", "bin\\spec.cmd", -1)
+	}
+	return command
 }
 
 // Runs the given command, returns its output

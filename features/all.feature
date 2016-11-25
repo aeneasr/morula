@@ -38,7 +38,7 @@ Feature: running a command in all subprojects
     When trying to run "morula all bin/spec"
     Then it fails with an error code and the message:
       """
-      subproject fails is broken
+      subproject fails has issues
       """
 
 
@@ -60,5 +60,5 @@ Feature: running a command in all subprojects
     When trying to run "morula all zonk"
     Then it fails with an error code and the message:
       """
-      command zonk doesn't exist
+      subproject works has issues
       """

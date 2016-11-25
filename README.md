@@ -1,11 +1,12 @@
 <img src="documentation/logo.png" width="600" height="111" alt="Morula logo">
 
 [![Build Status](https://travis-ci.org/Originate/morula.svg?branch=master)](https://travis-ci.org/Originate/morula)
+[![Build status](https://ci.appveyor.com/api/projects/status/v3ui3ce2uqpr5l2c/branch/master?svg=true)](https://ci.appveyor.com/project/kevgo/morula/branch/master)
 [![Go Report Card](https://goreportcard.com/badge/github.com/Originate/morula)](https://goreportcard.com/report/github.com/Originate/morula)
 
 Monorepos are Git repositories that contain multiple code bases,
 typically for subprojects of the project in the repo.
-Morula runs tasks for all those subprojects within a monorepo.
+Morula runs shell commands for all those subprojects within a monorepo.
 Optionally only for the ones that contain changes.
 This makes running administrative tasks,
 for example tests or linters,
