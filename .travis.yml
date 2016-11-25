@@ -10,13 +10,13 @@ before_install:
 
 
 install:
-  - go get github.com/Masterminds/glide
+  - go get github.com/Masterminds/glide github.com/golang/lint/golint
   - glide install
   - go install
 
 
 script:
-  - go test
+  - bin/spec
 
 
 after_success:
