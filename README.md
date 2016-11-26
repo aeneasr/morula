@@ -38,87 +38,58 @@ Your monorepository should contain the subprojects in top-level folders.
 
 You can fine-tune the behavior of Morula
 via command-line parameters
-or a configuration file `morula.*`
-in YAML, JSON, TOML, HCL, or Java properties format.
-The options are:
+or a configuration file named `morula.*` in
+[YAML](http://yaml.org),
+[JSON](http://www.json.org),
+[TOML](https://github.com/toml-lang/toml),
+[HCL](https://github.com/hashicorp/hcl), or
+[Java properties](https://docs.oracle.com/cd/E23095_01/Platform.93/ATGProgGuide/html/s0204propertiesfileformat01.html)
+format.
+The configuration options are:
 
-
-#### always
-
-Always runs the given subproject, even if it has no changes.
-
-- set via configuration file:
-
-  __morula.yml__
-  ```yml
-  always: <SUBPROJECT NAME>
-  ```
-
-- set via command-line parameter:
-
-  ```
-  $ morula --always=<SUBPROJECT NAME> ...
-  ```
-
-
-#### never
-
-Never runs the given subproject, even if it has changes.
-
-- set via configuration file:
-
-  __morula.yml__
-  ```yml
-  never: <SUBPROJECT NAME>
-  ```
-
-- set via command-line parameter:
-
-  ```
-  $ morula --never=<SUBPROJECT NAME> ...
-  ```
-
-
-#### after-all
-
-Runs the given subproject after all others.
-
-- set via configuration file:
-
-  __morula.yml__
-  ```yml
-  after-all: <SUBPROJECT NAME>
-  ```
-
-- set via command-line parameter:
-
-  ```
-  $ morula --after-all=<SUBPROJECT NAME> ...
-  ```
-
-
-#### before-all
-
-Runs the given subproject before all others.
-
-- set via configuration file:
-
-  __morula.yml__
-  ```yml
-  before-all: <SUBPROJECT NAME>
-  ```
-
-- set via command-line parameter:
-
-  ```
-  $ morula --before-all=<SUBPROJECT NAME> ...
-  ```
+<table>
+  <tr>
+    <th>name</th>
+    <th>description</th>
+    <th>default</th>
+    <th>more info</th>
+  </tr>
+  <tr>
+    <td><i>always</i></td>
+    <td>always runs the given subproject, even if it has no changes</td>
+    <td><code>""</code></td>
+    <td><a href="features/always.feature">spec</a></td>
+  </tr>
+  <tr>
+    <td><i>never</i></td>
+    <td>never runs the given subproject, even if it has changes</td>
+    <td><code>""</code></td>
+    <td><a href="features/never.feature">spec</a></td>
+  </tr>
+  <tr>
+    <td><i>after-all</i></td>
+    <td>runs the given subproject after all others</td>
+    <td><code>""</code></td>
+    <td><a href="features/after-all.feature">spec</a></td>
+  </tr>
+  <tr>
+    <td><i>before-all</i></td>
+    <td>runs the given subproject before all others</td>
+    <td><code>""</code></td>
+    <td><a href="features/before-all.feature">spec</a></td>
+  </tr>
+  <tr>
+    <td><i>color</i></td>
+    <td>whether print output in color</td>
+    <td><code>true</code></td>
+    <td><a href="features/color.feature">spec</a></td>
+  </tr>
+</table>
 
 
 ## More info
 
 - [why monorepos](documentation/why_monorepos.md)
-- feature specs for [`morula all`](features/all.feature) and [`morula changed`](features/changed.feature)
 
 
 ## Related projects
