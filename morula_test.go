@@ -115,7 +115,7 @@ func FeatureContext(s *godog.Suite) {
 		return nil
 	})
 
-	s.Step(`^it runs that command in the directories:$`, func(tests *gherkin.DataTable) (result error) {
+	s.Step(`^it runs that command in the directories:$`, func(tests *gherkin.DataTable) (err error) {
 
 		// determine the names of the projects we expect to be tested
 		var expectedProjectNames []string
@@ -133,16 +133,16 @@ func FeatureContext(s *godog.Suite) {
 
 		diffs := pretty.Diff(expectedProjectNames, actualProjectNames)
 		if len(diffs) > 0 {
-			result = fmt.Errorf("Didn't run the expected projects: %s", diffs[0])
+			err = fmt.Errorf("Didn't run the expected projects: %s", diffs[0])
 		}
 		return
 	})
 
-	s.Step(`^running "([^"]*)"$`, func(command string) (result error) {
+	s.Step(`^running "([^"]*)"$`, func(command string) (err error) {
 		command = makeCrossPlatformCommand(command)
 		words, err := shellwords.Parse(command)
 		check(err)
-		output, result = run(words)
+		output, err = run(words)
 		fmt.Println(output)
 		return
 	})
