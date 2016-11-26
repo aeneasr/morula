@@ -46,11 +46,11 @@ func init() {
 	// will be global for your application.
 
 	// RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.morula.yaml)")
-	RootCmd.PersistentFlags().BoolP("color", "c", true, "Display output in color")
-	RootCmd.PersistentFlags().StringP("always", "A", "", "subproject to always run")
-	RootCmd.PersistentFlags().StringP("never", "n", "", "subproject to never run")
-	RootCmd.PersistentFlags().StringP("after-all", "a", "", "subproject to run after all others")
-	RootCmd.PersistentFlags().StringP("before-all", "b", "", "subproject to run before all others")
+	RootCmd.PersistentFlags().Bool("color", true, "Display output in color")
+	RootCmd.PersistentFlags().String("always", "", "subproject to always run")
+	RootCmd.PersistentFlags().String("never", "", "subproject to never run")
+	RootCmd.PersistentFlags().String("after-all", "", "subproject to run after all others")
+	RootCmd.PersistentFlags().String("before-all", "", "subproject to run before all others")
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
 	// RootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
