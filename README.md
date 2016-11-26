@@ -61,6 +61,24 @@ Always runs the given subproject, even if it has no changes.
   ```
 
 
+#### never
+
+Never runs the given subproject, even if it has changes.
+
+- set via configuration file:
+
+  __morula.yml__
+  ```yml
+  never: <SUBPROJECT NAME>
+  ```
+
+- set via command-line parameter:
+
+  ```
+  $ morula --never=<SUBPROJECT NAME> ...
+  ```
+
+
 #### after-all
 
 Runs the given subproject after all others.

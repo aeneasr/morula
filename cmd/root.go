@@ -48,6 +48,7 @@ func init() {
 	// RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.morula.yaml)")
 	RootCmd.PersistentFlags().BoolP("color", "c", true, "Display output in color")
 	RootCmd.PersistentFlags().StringP("always", "A", "", "subproject to always run")
+	RootCmd.PersistentFlags().StringP("never", "n", "", "subproject to never run")
 	RootCmd.PersistentFlags().StringP("after-all", "a", "", "subproject to run after all others")
 	RootCmd.PersistentFlags().StringP("before-all", "b", "", "subproject to run before all others")
 	// Cobra also supports local flags, which will only run
@@ -55,6 +56,7 @@ func init() {
 	// RootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 	// viper.BindPFlag("color", RootCmd.PersistentFlags().Lookup("color"))
 	viper.BindPFlag("always", RootCmd.PersistentFlags().Lookup("always"))
+	viper.BindPFlag("never", RootCmd.PersistentFlags().Lookup("never"))
 	viper.BindPFlag("after-all", RootCmd.PersistentFlags().Lookup("after-all"))
 	viper.BindPFlag("before-all", RootCmd.PersistentFlags().Lookup("before-all"))
 }
@@ -106,7 +108,6 @@ func getAlways() (result string) {
 		fmt.Printf("The config file specifies to always run subproject %s,\nbut this path is not a directory.", result)
 		os.Exit(1)
 	}
-	fmt.Println("Always:", result)
 	return
 }
 
@@ -142,11 +143,25 @@ func getAurora(cmd *cobra.Command) aurora.Aurora {
 	return aurora.NewAurora(color)
 }
 
+func getNever() (result string) {
+	result = viper.GetString("never")
+	if result != "" && !directoryExists(result) {
+		fmt.Printf("The config file specifies to never run subproject %s,\nbut such a subproject does not exist.", result)
+		os.Exit(1)
+	}
+	if result != "" && !isDirectory(result) {
+		fmt.Printf("The config file specifies to never run subproject %s,\nbut this path is not a directory.", result)
+		os.Exit(1)
+	}
+	return
+}
+
 func getSubprojectNames() (result []string) {
 	always := getAlways()
 	if always != "" {
 		result = append(result, always)
 	}
+	never := getNever()
 	beforeAll := getBeforeAll()
 	afterAll := getAfterAll()
 	entries, err := ioutil.ReadDir(".")
@@ -156,7 +171,7 @@ func getSubprojectNames() (result []string) {
 	}
 	for _, entry := range entries {
 		entryName := entry.Name()
-		if entry.IsDir() && entryName != ".git" && entryName != afterAll && entryName != beforeAll && entryName != always {
+		if entry.IsDir() && entryName != ".git" && entryName != afterAll && entryName != beforeAll && entryName != always && entryName != never {
 			result = append(result, entry.Name())
 		}
 	}
@@ -174,6 +189,7 @@ func getChangedSubprojectNames() (result []string) {
 	if always != "" {
 		result = append(result, always)
 	}
+	never := getNever()
 	beforeAll := getBeforeAll()
 	if beforeAll != "" {
 		result = append(result, beforeAll)
@@ -188,7 +204,7 @@ func getChangedSubprojectNames() (result []string) {
 		filePath = strings.Trim(filePath, " ")
 		if len(filePath) > 0 {
 			projectName := strings.Split(filePath, "/")[0] // Git always returns "/" even on Windows
-			if (projectName != afterAll && projectName != beforeAll) && (len(result) == 0 || result[len(result)-1] != projectName) {
+			if (projectName != afterAll && projectName != beforeAll && projectName != never) && (len(result) == 0 || result[len(result)-1] != projectName) {
 				result = append(result, projectName)
 			}
 		}
