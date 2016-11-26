@@ -94,7 +94,7 @@ run `morula setup`.
 
 ## More info
 
-- [why monorepos](documentation/why_monorepos.md)
+- [why monorepos?](documentation/why_monorepos.md)
 
 
 ## Related projects

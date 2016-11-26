@@ -33,7 +33,11 @@ More motivation can be found in the
 
 Because of this,
 many complex open-source projects
-like React, Meteor, Ember, and Babel
+like [React](https://github.com/facebook/react),
+[Meteor](https://github.com/meteor/meteor),
+[Docker](https://github.com/docker/docker),
+[Ember](https://github.com/emberjs/ember.js/), and
+[Babel](https://github.com/babel/babel)
 have moved towards an architecture that puts
 all subprojects into the same repository, i.e. a _monorepository_.
 Doing so allows to implement, review, and test changes
