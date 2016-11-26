@@ -87,6 +87,20 @@ func FeatureContext(s *godog.Suite) {
 		return nil
 	})
 
+	s.Step(`^it prints the output in color$`, func() error {
+		if !strings.Contains(output, "[0m") {
+			return errors.New("output contains no colors")
+		}
+		return nil
+	})
+
+	s.Step(`^it prints the output without colors$`, func() error {
+		if strings.Contains(output, "[0m") {
+			return errors.New("output contains colors")
+		}
+		return nil
+	})
+
 	s.Step(`^it runs that command in the directories:$`, func(tests *gherkin.DataTable) (result error) {
 
 		// determine the names of the projects we expect to be tested
@@ -163,6 +177,11 @@ func commitAllChanges(testRoot string) {
 	checkText(err, output)
 }
 
+// returns whether the given command list contains a color argument
+func containsColorArgument(commands []string) bool {
+	return strings.Contains(strings.Join(commands, " "), "--color=")
+}
+
 func createConfigFile(content, testRoot string) {
 	ioutil.WriteFile(filepath.Join(testRoot, "morula.yml"), []byte(content), 0644)
 }
@@ -220,7 +239,7 @@ func makeCrossPlatformCommand(command string) string {
 
 // Runs the given command, returns its output
 func run(commands []string, dir string) (output string, err error) {
-	if commands[0] == "morula" {
+	if commands[0] == "morula" && !containsColorArgument(commands) {
 		commands = append(commands, "--color=false")
 	}
 	command := exec.Command(commands[0], commands[1:]...)
