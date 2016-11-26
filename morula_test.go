@@ -17,11 +17,11 @@ import (
 	"testing"
 )
 
+// the temp dir in which the test repos live
+var testRoot string
+
 // Cucumber step definitions
 func FeatureContext(s *godog.Suite) {
-
-	// the temp dir in which the test repos live
-	var testRoot string
 
 	// the output of the last command run
 	var output string
@@ -42,43 +42,43 @@ func FeatureContext(s *godog.Suite) {
 
 	s.Step(`^a project with the configuration file:$`, func(configText *gherkin.DocString) error {
 		testRoot = createTempDir()
-		createConfigFile(configText.Content, testRoot)
+		createConfigFile(configText.Content)
 		return nil
 	})
 
 	s.Step(`^a project with the subprojects:$`, func(projectData *gherkin.DataTable) error {
 		testRoot = createTempDir()
-		initializeGitRepo(testRoot)
+		initializeGitRepo()
 		for _, project := range projectData.Rows[1:] {
-			createTestProject(project.Cells[1].Value, project.Cells[0].Value, testRoot)
+			createTestProject(project.Cells[1].Value, project.Cells[0].Value)
 		}
-		commitAllChanges(testRoot)
+		commitAllChanges()
 		return nil
 	})
 
 	s.Step(`^a project with the subprojects "([^"]*)", "([^"]*)", and the configuration file:$`, func(project1 string, project2 string, configText *gherkin.DocString) error {
 		testRoot = createTempDir()
-		initializeGitRepo(testRoot)
-		createTestProject("passing_1", project1, testRoot)
-		createTestProject("passing_2", project2, testRoot)
-		createConfigFile(configText.Content, testRoot)
-		commitAllChanges(testRoot)
+		initializeGitRepo()
+		createTestProject("passing_1", project1)
+		createTestProject("passing_2", project2)
+		createConfigFile(configText.Content)
+		commitAllChanges()
 		return nil
 	})
 
 	s.Step(`^a project with the subprojects "([^"]*)", "([^"]*)", "([^"]*)", and the configuration file:$`, func(project1 string, project2 string, project3 string, configText *gherkin.DocString) error {
 		testRoot = createTempDir()
-		initializeGitRepo(testRoot)
-		createTestProject("passing_1", project1, testRoot)
-		createTestProject("passing_2", project2, testRoot)
-		createTestProject("e2e_passing", project3, testRoot)
-		createConfigFile(configText.Content, testRoot)
-		commitAllChanges(testRoot)
+		initializeGitRepo()
+		createTestProject("passing_1", project1)
+		createTestProject("passing_2", project2)
+		createTestProject("e2e_passing", project3)
+		createConfigFile(configText.Content)
+		commitAllChanges()
 		return nil
 	})
 
 	s.Step(`^I am on the "([^"]*)" branch$`, func(branchName string) error {
-		switchBranch(branchName, testRoot)
+		switchBranch(branchName)
 		return nil
 	})
 
@@ -142,21 +142,21 @@ func FeatureContext(s *godog.Suite) {
 		command = makeCrossPlatformCommand(command)
 		words, err := shellwords.Parse(command)
 		check(err)
-		output, result = run(words, testRoot)
+		output, result = run(words)
 		fmt.Println(output)
 		return
 	})
 
 	s.Step(`^subproject "([^"]*)" has changes$`, func(project1 string) error {
 		ioutil.WriteFile(filepath.Join(testRoot, project1, "change.txt"), []byte("changes"), 0644)
-		commitAllChanges(testRoot)
+		commitAllChanges()
 		return nil
 	})
 
 	s.Step(`^subprojects "([^"]*)" and "([^"]*)" have changes$`, func(project1, project2 string) error {
 		ioutil.WriteFile(filepath.Join(testRoot, project1, "change.txt"), []byte("changes"), 0644)
 		ioutil.WriteFile(filepath.Join(testRoot, project2, "change.txt"), []byte("changes"), 0644)
-		commitAllChanges(testRoot)
+		commitAllChanges()
 		return nil
 	})
 
@@ -164,7 +164,7 @@ func FeatureContext(s *godog.Suite) {
 		ioutil.WriteFile(filepath.Join(testRoot, project1, "change.txt"), []byte("changes"), 0644)
 		ioutil.WriteFile(filepath.Join(testRoot, project2, "change.txt"), []byte("changes"), 0644)
 		ioutil.WriteFile(filepath.Join(testRoot, project3, "change.txt"), []byte("changes"), 0644)
-		commitAllChanges(testRoot)
+		commitAllChanges()
 		return nil
 	})
 
@@ -174,7 +174,7 @@ func FeatureContext(s *godog.Suite) {
 
 	s.Step(`^trying to run "([^"]*)"$`, func(command string) (result error) {
 		command = makeCrossPlatformCommand(command)
-		output, err = run(strings.Split(command, " "), testRoot)
+		output, err = run(strings.Split(command, " "))
 		fmt.Println(output)
 		if err == nil {
 			result = errors.New("Expected failure, but command ran without errors")
@@ -184,10 +184,10 @@ func FeatureContext(s *godog.Suite) {
 
 }
 
-func commitAllChanges(testRoot string) {
-	output, err := run([]string{"git", "add", "-A"}, testRoot)
+func commitAllChanges() {
+	output, err := run([]string{"git", "add", "-A"})
 	checkText(err, output)
-	output, err = run([]string{"git", "commit", "-m", "changes"}, testRoot)
+	output, err = run([]string{"git", "commit", "-m", "changes"})
 	checkText(err, output)
 }
 
@@ -196,7 +196,7 @@ func containsColorArgument(commands []string) bool {
 	return strings.Contains(strings.Join(commands, " "), "--color=")
 }
 
-func createConfigFile(content, testRoot string) {
+func createConfigFile(content string) {
 	ioutil.WriteFile(filepath.Join(testRoot, "morula.yml"), []byte(content), 0644)
 }
 
@@ -209,7 +209,7 @@ func createTempDir() (path string) {
 // Creates a subproject of the given type,
 // with the given name,
 // in the given test workspace
-func createTestProject(template string, name string, testRoot string) {
+func createTestProject(template string, name string) {
 	check(shutil.CopyTree(
 		filepath.Join("features", "examples", template),
 		filepath.Join(testRoot, name),
@@ -229,18 +229,18 @@ func checkText(e error, text string) {
 	}
 }
 
-func createMasterBranch(testRoot string) {
+func createMasterBranch() {
 	ioutil.WriteFile(filepath.Join(testRoot, "init.txt"), []byte("hello"), 0644)
-	output, err := run([]string{"git", "add", "-A"}, testRoot)
+	output, err := run([]string{"git", "add", "-A"})
 	checkText(err, output)
-	output, err = run([]string{"git", "commit", "-m", "init"}, testRoot)
+	output, err = run([]string{"git", "commit", "-m", "init"})
 	checkText(err, output)
 }
 
-func initializeGitRepo(testRoot string) {
-	output, err := run([]string{"git", "init", "."}, testRoot)
+func initializeGitRepo() {
+	output, err := run([]string{"git", "init", "."})
 	checkText(err, output)
-	createMasterBranch(testRoot)
+	createMasterBranch()
 }
 
 func makeCrossPlatformCommand(command string) string {
@@ -252,12 +252,12 @@ func makeCrossPlatformCommand(command string) string {
 }
 
 // Runs the given command, returns its output
-func run(commands []string, dir string) (output string, err error) {
+func run(commands []string) (output string, err error) {
 	if commands[0] == "morula" && !containsColorArgument(commands) {
 		commands = append(commands, "--color=false")
 	}
 	command := exec.Command(commands[0], commands[1:]...)
-	command.Dir = dir
+	command.Dir = testRoot
 	outputArray, err := command.CombinedOutput()
 	output = string(outputArray)
 	return
@@ -271,8 +271,8 @@ func splitProjectNames(projectNames string) (result []string) {
 	return
 }
 
-func switchBranch(branchName string, dir string) {
-	output, err := run([]string{"git", "checkout", "-b", branchName}, dir)
+func switchBranch(branchName string) {
+	output, err := run([]string{"git", "checkout", "-b", branchName})
 	checkText(err, output)
 }
 
