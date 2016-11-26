@@ -47,12 +47,14 @@ func init() {
 
 	// RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.morula.yaml)")
 	RootCmd.PersistentFlags().BoolP("color", "c", true, "Display output in color")
+	RootCmd.PersistentFlags().StringP("always", "A", "", "subproject to always run")
 	RootCmd.PersistentFlags().StringP("after-all", "a", "", "subproject to run after all others")
 	RootCmd.PersistentFlags().StringP("before-all", "b", "", "subproject to run before all others")
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
 	// RootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 	// viper.BindPFlag("color", RootCmd.PersistentFlags().Lookup("color"))
+	viper.BindPFlag("always", RootCmd.PersistentFlags().Lookup("always"))
 	viper.BindPFlag("after-all", RootCmd.PersistentFlags().Lookup("after-all"))
 	viper.BindPFlag("before-all", RootCmd.PersistentFlags().Lookup("before-all"))
 }
@@ -94,6 +96,20 @@ func isDirectory(dirName string) bool {
 	return stats.IsDir()
 }
 
+func getAlways() (result string) {
+	result = viper.GetString("always")
+	if result != "" && !directoryExists(result) {
+		fmt.Printf("The config file specifies to always run subproject %s,\nbut such a subproject does not exist.", result)
+		os.Exit(1)
+	}
+	if result != "" && !isDirectory(result) {
+		fmt.Printf("The config file specifies to always run subproject %s,\nbut this path is not a directory.", result)
+		os.Exit(1)
+	}
+	fmt.Println("Always:", result)
+	return
+}
+
 func getAfterAll() (result string) {
 	result = viper.GetString("after-all")
 	if result != "" && !directoryExists(result) {
@@ -126,18 +142,21 @@ func getAurora(cmd *cobra.Command) aurora.Aurora {
 	return aurora.NewAurora(color)
 }
 
-func getSubprojectNames() []string {
+func getSubprojectNames() (result []string) {
+	always := getAlways()
+	if always != "" {
+		result = append(result, always)
+	}
 	beforeAll := getBeforeAll()
 	afterAll := getAfterAll()
 	entries, err := ioutil.ReadDir(".")
 	check(err)
-	var result []string
 	if beforeAll != "" {
 		result = append(result, beforeAll)
 	}
 	for _, entry := range entries {
 		entryName := entry.Name()
-		if entry.IsDir() && entryName != ".git" && entryName != afterAll && entryName != beforeAll {
+		if entry.IsDir() && entryName != ".git" && entryName != afterAll && entryName != beforeAll && entryName != always {
 			result = append(result, entry.Name())
 		}
 	}
@@ -151,6 +170,10 @@ func getChangedSubprojectNames() (result []string) {
 	// Due to the lack of array methods like "uniq" in Golang,
 	// this method iterates the filenames sorted alphabetically
 	// and only appends the resulting project name to the result if the last element isn't it.
+	always := getAlways()
+	if always != "" {
+		result = append(result, always)
+	}
 	beforeAll := getBeforeAll()
 	if beforeAll != "" {
 		result = append(result, beforeAll)
