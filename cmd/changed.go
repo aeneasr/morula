@@ -9,9 +9,12 @@ import (
 
 // changedCmd represents the test command
 var changedCmd = &cobra.Command{
-	Use:   "changed <command to run>",
-	Short: "Runs the given command in the folders of subprojects",
-	Long:  `This command runs the given command in the folders of subprojects.`,
+	Use:   "changed <shell command to run>",
+	Short: "Runs the given shell command in the folders of subprojects containing changes",
+	Long: `This command runs the given shell command in the folders of subprojects containing changes.
+
+Changes are determined by diffing the commits of the current branch
+against the "master" branch.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		c := getAurora(cmd)
 		if len(args) == 0 {
