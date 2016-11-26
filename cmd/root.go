@@ -48,11 +48,13 @@ func init() {
 	// RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.morula.yaml)")
 	RootCmd.PersistentFlags().BoolP("color", "c", true, "Display output in color")
 	RootCmd.PersistentFlags().StringP("after-all", "a", "", "subproject to run after all others")
+	RootCmd.PersistentFlags().StringP("before-all", "b", "", "subproject to run before all others")
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
 	// RootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 	// viper.BindPFlag("color", RootCmd.PersistentFlags().Lookup("color"))
 	viper.BindPFlag("after-all", RootCmd.PersistentFlags().Lookup("after-all"))
+	viper.BindPFlag("before-all", RootCmd.PersistentFlags().Lookup("before-all"))
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -105,6 +107,19 @@ func getAfterAll() (result string) {
 	return
 }
 
+func getBeforeAll() (result string) {
+	result = viper.GetString("before-all")
+	if result != "" && !directoryExists(result) {
+		fmt.Printf("The config file specifies to run subproject %s before all others,\nbut such a subproject does not exist.", result)
+		os.Exit(1)
+	}
+	if result != "" && !isDirectory(result) {
+		fmt.Printf("The config file specifies to run subproject %s before all others,\nbut this path is not a directory.", result)
+		os.Exit(1)
+	}
+	return
+}
+
 func getAurora(cmd *cobra.Command) aurora.Aurora {
 	color, err := cmd.Flags().GetBool("color")
 	check(err)
@@ -112,13 +127,17 @@ func getAurora(cmd *cobra.Command) aurora.Aurora {
 }
 
 func getSubprojectNames() []string {
+	beforeAll := getBeforeAll()
 	afterAll := getAfterAll()
 	entries, err := ioutil.ReadDir(".")
 	check(err)
 	var result []string
+	if beforeAll != "" {
+		result = append(result, beforeAll)
+	}
 	for _, entry := range entries {
 		entryName := entry.Name()
-		if entry.IsDir() && entryName != ".git" && entryName != afterAll {
+		if entry.IsDir() && entryName != ".git" && entryName != afterAll && entryName != beforeAll {
 			result = append(result, entry.Name())
 		}
 	}
@@ -132,6 +151,10 @@ func getChangedSubprojectNames() (result []string) {
 	// Due to the lack of array methods like "uniq" in Golang,
 	// this method iterates the filenames sorted alphabetically
 	// and only appends the resulting project name to the result if the last element isn't it.
+	beforeAll := getBeforeAll()
+	if beforeAll != "" {
+		result = append(result, beforeAll)
+	}
 	afterAll := getAfterAll()
 	currentBranchName := getCurrentBranchName()
 	out, err := exec.Command("git", "diff", "--name-only", fmt.Sprintf("master..%s", currentBranchName)).Output()
@@ -142,7 +165,7 @@ func getChangedSubprojectNames() (result []string) {
 		filePath = strings.Trim(filePath, " ")
 		if len(filePath) > 0 {
 			projectName := strings.Split(filePath, "/")[0] // Git always returns "/" even on Windows
-			if (projectName != afterAll) && (len(result) == 0 || result[len(result)-1] != projectName) {
+			if (projectName != afterAll && projectName != beforeAll) && (len(result) == 0 || result[len(result)-1] != projectName) {
 				result = append(result, projectName)
 			}
 		}

@@ -36,9 +36,12 @@ Your monorepository should contain the subprojects in top-level folders.
 
 ## Configuration
 
-You can fine-tune the behavior of Morula in a variety of ways:
-via command-line parameters or a configuration file `morula.yml`.
+You can fine-tune the behavior of Morula
+via command-line parameters
+or a configuration file `morula.*`
+in YAML, JSON, TOML, HCL, or Java properties format.
 The options are:
+
 
 #### after-all
 
@@ -55,6 +58,24 @@ Runs the given subproject after all others.
 
   ```
   $ morula --after-all=<SUBPROJECT NAME> ...
+  ```
+
+
+#### before-all
+
+Runs the given subproject before all others.
+
+- set via configuration file:
+
+  __morula.yml__
+  ```yml
+  before-all: <SUBPROJECT NAME>
+  ```
+
+- set via command-line parameter:
+
+  ```
+  $ morula --before-all=<SUBPROJECT NAME> ...
   ```
 
 
