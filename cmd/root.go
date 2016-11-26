@@ -47,9 +47,12 @@ func init() {
 
 	// RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.morula.yaml)")
 	RootCmd.PersistentFlags().BoolP("color", "c", true, "Display output in color")
+	RootCmd.PersistentFlags().StringP("after-all", "a", "", "subproject to run after all others")
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
 	// RootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// viper.BindPFlag("color", RootCmd.PersistentFlags().Lookup("color"))
+	viper.BindPFlag("after-all", RootCmd.PersistentFlags().Lookup("after-all"))
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -59,8 +62,8 @@ func initConfig() {
 	}
 
 	viper.SetConfigName("morula") // name of config file (without extension)
-	viper.AddConfigPath("$HOME")  // adding home directory as first search path
-	viper.AutomaticEnv()          // read in environment variables that match
+	viper.AddConfigPath(".")
+	viper.AutomaticEnv() // read in environment variables that match
 
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
@@ -77,6 +80,31 @@ func check(e error) {
 	}
 }
 
+// returns whether the given directory exists in the current working directory
+func directoryExists(dirName string) bool {
+	_, err := os.Stat(dirName)
+	return !os.IsNotExist(err)
+}
+
+func isDirectory(dirName string) bool {
+	stats, err := os.Stat(dirName)
+	check(err)
+	return stats.IsDir()
+}
+
+func getAfterAll() (result string) {
+	result = viper.GetString("after-all")
+	if result != "" && !directoryExists(result) {
+		fmt.Printf("The config file specifies to run subproject %s after all others,\nbut such a subproject does not exist.", result)
+		os.Exit(1)
+	}
+	if result != "" && !isDirectory(result) {
+		fmt.Printf("The config file specifies to run subproject %s after all others,\nbut this path is not a directory.", result)
+		os.Exit(1)
+	}
+	return
+}
+
 func getAurora(cmd *cobra.Command) aurora.Aurora {
 	color, err := cmd.Flags().GetBool("color")
 	check(err)
@@ -84,13 +112,18 @@ func getAurora(cmd *cobra.Command) aurora.Aurora {
 }
 
 func getSubprojectNames() []string {
+	afterAll := getAfterAll()
 	entries, err := ioutil.ReadDir(".")
 	check(err)
 	var result []string
 	for _, entry := range entries {
-		if entry.IsDir() && entry.Name() != ".git" {
+		entryName := entry.Name()
+		if entry.IsDir() && entryName != ".git" && entryName != afterAll {
 			result = append(result, entry.Name())
 		}
+	}
+	if afterAll != "" {
+		result = append(result, afterAll)
 	}
 	return result
 }
@@ -99,6 +132,7 @@ func getChangedSubprojectNames() (result []string) {
 	// Due to the lack of array methods like "uniq" in Golang,
 	// this method iterates the filenames sorted alphabetically
 	// and only appends the resulting project name to the result if the last element isn't it.
+	afterAll := getAfterAll()
 	currentBranchName := getCurrentBranchName()
 	out, err := exec.Command("git", "diff", "--name-only", fmt.Sprintf("master..%s", currentBranchName)).Output()
 	check(err)
@@ -108,10 +142,13 @@ func getChangedSubprojectNames() (result []string) {
 		filePath = strings.Trim(filePath, " ")
 		if len(filePath) > 0 {
 			projectName := strings.Split(filePath, "/")[0] // Git always returns "/" even on Windows
-			if len(result) == 0 || result[len(result)-1] != projectName {
+			if (projectName != afterAll) && (len(result) == 0 || result[len(result)-1] != projectName) {
 				result = append(result, projectName)
 			}
 		}
+	}
+	if afterAll != "" {
+		result = append(result, afterAll)
 	}
 	return result
 }

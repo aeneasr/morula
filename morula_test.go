@@ -35,12 +35,39 @@ func FeatureContext(s *godog.Suite) {
 	// s.AfterScenario(func(interface{}, error) {
 	// })
 
+	s.Step(`^a project with the configuration file:$`, func(configText *gherkin.DocString) error {
+		testRoot = createTempDir()
+		createConfigFile(configText.Content, testRoot)
+		return nil
+	})
+
 	s.Step(`^a project with the subprojects:$`, func(projectData *gherkin.DataTable) error {
 		testRoot = createTempDir()
 		initializeGitRepo(testRoot)
 		for _, project := range projectData.Rows[1:] {
 			createTestProject(project.Cells[1].Value, project.Cells[0].Value, testRoot)
 		}
+		commitAllChanges(testRoot)
+		return nil
+	})
+
+	s.Step(`^a project with the subprojects "([^"]*)", "([^"]*)", and the configuration file:$`, func(project1 string, project2 string, configText *gherkin.DocString) error {
+		testRoot = createTempDir()
+		initializeGitRepo(testRoot)
+		createTestProject("passing_1", project1, testRoot)
+		createTestProject("passing_2", project2, testRoot)
+		createConfigFile(configText.Content, testRoot)
+		commitAllChanges(testRoot)
+		return nil
+	})
+
+	s.Step(`^a project with the subprojects "([^"]*)", "([^"]*)", "([^"]*)", and the configuration file:$`, func(project1 string, project2 string, project3 string, configText *gherkin.DocString) error {
+		testRoot = createTempDir()
+		initializeGitRepo(testRoot)
+		createTestProject("passing_1", project1, testRoot)
+		createTestProject("passing_2", project2, testRoot)
+		createTestProject("e2e_passing", project3, testRoot)
+		createConfigFile(configText.Content, testRoot)
 		commitAllChanges(testRoot)
 		return nil
 	})
@@ -93,16 +120,28 @@ func FeatureContext(s *godog.Suite) {
 	})
 
 	s.Step(`^subproject "([^"]*)" has changes$`, func(project1 string) error {
-		ioutil.WriteFile(filepath.Join(testRoot, project1, "change.txt"), []byte("hello"), 0644)
+		ioutil.WriteFile(filepath.Join(testRoot, project1, "change.txt"), []byte("changes"), 0644)
 		commitAllChanges(testRoot)
 		return nil
 	})
 
 	s.Step(`^subprojects "([^"]*)" and "([^"]*)" have changes$`, func(project1, project2 string) error {
-		ioutil.WriteFile(filepath.Join(testRoot, project1, "change.txt"), []byte("hello"), 0644)
-		ioutil.WriteFile(filepath.Join(testRoot, project2, "change.txt"), []byte("hello"), 0644)
+		ioutil.WriteFile(filepath.Join(testRoot, project1, "change.txt"), []byte("changes"), 0644)
+		ioutil.WriteFile(filepath.Join(testRoot, project2, "change.txt"), []byte("changes"), 0644)
 		commitAllChanges(testRoot)
 		return nil
+	})
+
+	s.Step(`^subprojects "([^"]*)", "([^"]*)", and "([^"]*)" have changes$`, func(project1, project2, project3 string) error {
+		ioutil.WriteFile(filepath.Join(testRoot, project1, "change.txt"), []byte("changes"), 0644)
+		ioutil.WriteFile(filepath.Join(testRoot, project2, "change.txt"), []byte("changes"), 0644)
+		ioutil.WriteFile(filepath.Join(testRoot, project3, "change.txt"), []byte("changes"), 0644)
+		commitAllChanges(testRoot)
+		return nil
+	})
+
+	s.Step(`^the project contains a file "([^"]*)"$`, func(filename string) error {
+		return ioutil.WriteFile(filepath.Join(testRoot, filename), []byte("content"), 0644)
 	})
 
 	s.Step(`^trying to run "([^"]*)"$`, func(command string) (result error) {
@@ -122,6 +161,10 @@ func commitAllChanges(testRoot string) {
 	checkText(err, output)
 	output, err = run([]string{"git", "commit", "-m", "changes"}, testRoot)
 	checkText(err, output)
+}
+
+func createConfigFile(content, testRoot string) {
+	ioutil.WriteFile(filepath.Join(testRoot, "morula.yml"), []byte(content), 0644)
 }
 
 func createTempDir() (path string) {

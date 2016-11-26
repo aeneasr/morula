@@ -34,6 +34,30 @@ Your monorepository should contain the subprojects in top-level folders.
   that is changed compared to the main branch
 
 
+## Configuration
+
+You can fine-tune the behavior of Morula in a variety of ways:
+via command-line parameters or a configuration file `morula.yml`.
+The options are:
+
+#### after-all
+
+Runs the given subproject after all others.
+
+- set via configuration file:
+
+  __morula.yml__
+  ```yml
+  after-all: <SUBPROJECT NAME>
+  ```
+
+- set via command-line parameter:
+
+  ```
+  $ morula --after-all=<SUBPROJECT NAME> ...
+  ```
+
+
 ## More info
 
 - [why monorepos](documentation/why_monorepos.md)
