@@ -20,11 +20,11 @@ import (
 // the temp dir in which the test repos live
 var testRoot string
 
+// the output of the last command run
+var output string
+
 // Cucumber step definitions
 func FeatureContext(s *godog.Suite) {
-
-	// the output of the last command run
-	var output string
 
 	// the error of the last run operation
 	var err error
@@ -142,7 +142,7 @@ func FeatureContext(s *godog.Suite) {
 		command = makeCrossPlatformCommand(command)
 		words, err := shellwords.Parse(command)
 		check(err)
-		output, err = run(words)
+		err = run(words)
 		fmt.Println(output)
 		return
 	})
@@ -174,7 +174,7 @@ func FeatureContext(s *godog.Suite) {
 
 	s.Step(`^trying to run "([^"]*)"$`, func(command string) (result error) {
 		command = makeCrossPlatformCommand(command)
-		output, err = run(strings.Split(command, " "))
+		err = run(strings.Split(command, " "))
 		fmt.Println(output)
 		if err == nil {
 			result = errors.New("Expected failure, but command ran without errors")
@@ -185,9 +185,9 @@ func FeatureContext(s *godog.Suite) {
 }
 
 func commitAllChanges() {
-	output, err := run([]string{"git", "add", "-A"})
+	err := run([]string{"git", "add", "-A"})
 	checkText(err, output)
-	output, err = run([]string{"git", "commit", "-m", "changes"})
+	err = run([]string{"git", "commit", "-m", "changes"})
 	checkText(err, output)
 }
 
@@ -231,14 +231,14 @@ func checkText(e error, text string) {
 
 func createMasterBranch() {
 	ioutil.WriteFile(filepath.Join(testRoot, "init.txt"), []byte("hello"), 0644)
-	output, err := run([]string{"git", "add", "-A"})
+	err := run([]string{"git", "add", "-A"})
 	checkText(err, output)
-	output, err = run([]string{"git", "commit", "-m", "init"})
+	err = run([]string{"git", "commit", "-m", "init"})
 	checkText(err, output)
 }
 
 func initializeGitRepo() {
-	output, err := run([]string{"git", "init", "."})
+	err := run([]string{"git", "init", "."})
 	checkText(err, output)
 	createMasterBranch()
 }
@@ -251,8 +251,8 @@ func makeCrossPlatformCommand(command string) string {
 	return command
 }
 
-// Runs the given command, returns its output
-func run(commands []string) (output string, err error) {
+// Runs the given command, stores the output in "output"
+func run(commands []string) (err error) {
 	if commands[0] == "morula" && !containsColorArgument(commands) {
 		commands = append(commands, "--color=false")
 	}
@@ -272,7 +272,7 @@ func splitProjectNames(projectNames string) (result []string) {
 }
 
 func switchBranch(branchName string) {
-	output, err := run([]string{"git", "checkout", "-b", branchName})
+	err := run([]string{"git", "checkout", "-b", branchName})
 	checkText(err, output)
 }
 
