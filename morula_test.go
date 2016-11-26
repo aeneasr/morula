@@ -35,6 +35,11 @@ func FeatureContext(s *godog.Suite) {
 	// s.AfterScenario(func(interface{}, error) {
 	// })
 
+	s.Step(`^a project$`, func() error {
+		testRoot = createTempDir()
+		return nil
+	})
+
 	s.Step(`^a project with the configuration file:$`, func(configText *gherkin.DocString) error {
 		testRoot = createTempDir()
 		createConfigFile(configText.Content, testRoot)
@@ -74,6 +79,15 @@ func FeatureContext(s *godog.Suite) {
 
 	s.Step(`^I am on the "([^"]*)" branch$`, func(branchName string) error {
 		switchBranch(branchName, testRoot)
+		return nil
+	})
+
+	s.Step(`^it creates a file "([^"]*)" with the content:$`, func(filename string, expectedContent *gherkin.DocString) error {
+		actualContent, err := ioutil.ReadFile(filepath.Join(testRoot, filename))
+		check(err)
+		if string(actualContent) != expectedContent.Content {
+			return fmt.Errorf("file content is different! expected: \n\"%s\"\n\nactual: \n\"%s\"", expectedContent.Content, string(actualContent))
+		}
 		return nil
 	})
 

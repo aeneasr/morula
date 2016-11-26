@@ -32,6 +32,8 @@ Your monorepository should contain the subprojects in top-level folders.
 - __[`morula changed <command>`](features/changed.feature)__
   runs the given command in every subproject
   that is changed compared to the main branch
+- __[`morula setup](features/setup.feature)__
+  creates an example configuration file with the default options
 
 
 ## Configuration
@@ -85,6 +87,9 @@ The configuration options are:
     <td><a href="features/color.feature">spec</a></td>
   </tr>
 </table>
+
+To create an example configuration file with the default options,
+run `morula setup`.
 
 
 ## More info
