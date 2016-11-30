@@ -13,6 +13,7 @@ Feature: running a command only in updated subprojects
       | one   | passing_1 |
       | two   | failing   |
       | three | passing_2 |
+    And the project contains a file "README.md"
     And I am on the "feature" branch
     And subprojects "one" and "three" have changes
     When running "morula changed bin/spec"

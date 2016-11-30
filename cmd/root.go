@@ -204,7 +204,8 @@ func getChangedSubprojectNames() (result []string) {
 		filePath = strings.Trim(filePath, " ")
 		if len(filePath) > 0 {
 			projectName := strings.Split(filePath, "/")[0] // Git always returns "/" even on Windows
-			if (projectName != afterAll && projectName != beforeAll && projectName != never) && (len(result) == 0 || result[len(result)-1] != projectName) {
+			file, err := os.Stat(projectName)
+			if err == nil && file.IsDir() && (projectName != afterAll && projectName != beforeAll && projectName != never) && (len(result) == 0 || result[len(result)-1] != projectName) {
 				result = append(result, projectName)
 			}
 		}
