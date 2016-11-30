@@ -255,6 +255,6 @@ func runInSubproject(subprojectName string, commands []string, c aurora.Aurora) 
 		return err
 	}
 
-	fmt.Print("\n...", c.Bold(c.Green("success")), "!\n\n\n")
+	fmt.Print("\n\n")
 	return
 }

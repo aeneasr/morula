@@ -28,7 +28,7 @@ against the "master" branch.`,
 				os.Exit(1)
 			}
 		}
-		fmt.Println(c.Bold(c.Green("ALL TESTS PASSED")))
+		fmt.Println(c.Bold(c.Green("ALL DONE")))
 	},
 }
 
