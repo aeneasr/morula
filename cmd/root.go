@@ -195,8 +195,7 @@ func getChangedSubprojectNames() (result []string) {
 		result = append(result, beforeAll)
 	}
 	afterAll := getAfterAll()
-	currentBranchName := getCurrentBranchName()
-	out, err := exec.Command("git", "diff", "--name-only", fmt.Sprintf("master..%s", currentBranchName)).Output()
+	out, err := exec.Command("git", "diff", "--name-only", "master").Output()
 	check(err)
 	filePaths := strings.Split(string(out), "\n")
 	sort.Strings(filePaths)
@@ -214,17 +213,6 @@ func getChangedSubprojectNames() (result []string) {
 		result = append(result, afterAll)
 	}
 	return result
-}
-
-func getCurrentBranchName() string {
-	out, err := exec.Command("git", "branch").Output()
-	check(err)
-	for _, line := range strings.Split(string(out), "\n") {
-		if line[0] == '*' {
-			return strings.Trim(line[2:], " ")
-		}
-	}
-	panic("no current branch found")
 }
 
 func runInSubproject(subprojectName string, commands []string, c aurora.Aurora) (err error) {
