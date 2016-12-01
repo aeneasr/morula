@@ -171,7 +171,7 @@ func getSubprojectNames() (result []string) {
 	}
 	for _, entry := range entries {
 		entryName := entry.Name()
-		if entry.IsDir() && entryName != ".git" && entryName != afterAll && entryName != beforeAll && entryName != always && entryName != never {
+		if entry.IsDir() && entryName[0] != '.' && entryName != afterAll && entryName != beforeAll && entryName != always && entryName != never {
 			result = append(result, entry.Name())
 		}
 	}
@@ -204,7 +204,7 @@ func getChangedSubprojectNames() (result []string) {
 		if len(filePath) > 0 {
 			projectName := strings.Split(filePath, "/")[0] // Git always returns "/" even on Windows
 			file, err := os.Stat(projectName)
-			if err == nil && file.IsDir() && (projectName != afterAll && projectName != beforeAll && projectName != never) && (len(result) == 0 || result[len(result)-1] != projectName) {
+			if err == nil && file.IsDir() && projectName[0] != '.' && (projectName != afterAll && projectName != beforeAll && projectName != never) && (len(result) == 0 || result[len(result)-1] != projectName) {
 				result = append(result, projectName)
 			}
 		}

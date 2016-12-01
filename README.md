@@ -88,6 +88,8 @@ The configuration options are:
   </tr>
 </table>
 
+Directories starting with a dot (e.g. `.git`)
+are automatically ignored.
 To create an example configuration file with the default options,
 run `morula setup`.
 
