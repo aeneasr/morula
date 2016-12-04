@@ -7,18 +7,22 @@ Feature: ignoring hidden folders
   - all directories starting with a dot are ignored
 
 
-  Scenario Outline: the workspace contains directories with a dot
+  Background:
     Given a project with the subprojects:
       | NAME | TEMPLATE |
       | one  | passing  |
       | .two | passing  |
-    And I am on the "feature" branch
-    And subprojects "one" and ".two" have changes
-    When running "morula <COMMAND> bin/spec"
+
+
+  Scenario: running "morula all"
+    When running "morula all bin/spec"
     Then it runs that command in the directories:
       | one |
 
-    Examples:
-      | COMMAND |
-      | all     |
-      | changed |
+
+  Scenario: running "morula changed"
+    And I am on the "feature" branch
+    And subprojects "one" and ".two" have changes
+    When running "morula changed bin/spec"
+    Then it runs that command in the directories:
+      | one |
