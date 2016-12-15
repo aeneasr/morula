@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/Originate/morula/src"
 	"github.com/spf13/cobra"
 )
 
@@ -19,8 +20,10 @@ var allCmd = &cobra.Command{
 			fmt.Println(cmd.UsageString())
 			os.Exit(1)
 		}
-		for _, subprojectName := range getSubprojectNames() {
-			err := runInSubproject(subprojectName, args, c)
+		projectFinder := src.ProjectFinder{getAlways(), getNever(), getBeforeAll(), getAfterAll()}
+		runner := src.NewRunner(c, args)
+		for _, subprojectName := range projectFinder.AllSubprojectNames() {
+			err := runner.RunInSubproject(subprojectName)
 			if err != nil {
 				os.Exit(1)
 			}

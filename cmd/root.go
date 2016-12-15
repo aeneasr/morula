@@ -3,13 +3,8 @@ package cmd
 import (
 	"fmt"
 	"github.com/logrusorgru/aurora"
-	"io/ioutil"
+	"github.com/Originate/morula/src"
 	"os"
-	"os/exec"
-	"path"
-	"runtime"
-	"sort"
-	"strings"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -79,23 +74,10 @@ func initConfig() {
 
 // HELPER FUNCTIONS
 
-func check(e error) {
-	if e != nil {
-		fmt.Println("ERROR:", e)
-		os.Exit(1)
-	}
-}
-
 // returns whether the given directory exists in the current working directory
 func directoryExists(dirName string) bool {
 	_, err := os.Stat(dirName)
 	return !os.IsNotExist(err)
-}
-
-func isDirectory(dirName string) bool {
-	stats, err := os.Stat(dirName)
-	check(err)
-	return stats.IsDir()
 }
 
 func getAlways() (result string) {
@@ -104,7 +86,7 @@ func getAlways() (result string) {
 		fmt.Printf("The config file specifies to always run subproject %s,\nbut such a subproject does not exist.", result)
 		os.Exit(1)
 	}
-	if result != "" && !isDirectory(result) {
+	if result != "" && !src.IsDirectory(result) {
 		fmt.Printf("The config file specifies to always run subproject %s,\nbut this path is not a directory.", result)
 		os.Exit(1)
 	}
@@ -117,7 +99,7 @@ func getAfterAll() (result string) {
 		fmt.Printf("The config file specifies to run subproject %s after all others,\nbut such a subproject does not exist.", result)
 		os.Exit(1)
 	}
-	if result != "" && !isDirectory(result) {
+	if result != "" && !src.IsDirectory(result) {
 		fmt.Printf("The config file specifies to run subproject %s after all others,\nbut this path is not a directory.", result)
 		os.Exit(1)
 	}
@@ -130,7 +112,7 @@ func getBeforeAll() (result string) {
 		fmt.Printf("The config file specifies to run subproject %s before all others,\nbut such a subproject does not exist.", result)
 		os.Exit(1)
 	}
-	if result != "" && !isDirectory(result) {
+	if result != "" && !src.IsDirectory(result) {
 		fmt.Printf("The config file specifies to run subproject %s before all others,\nbut this path is not a directory.", result)
 		os.Exit(1)
 	}
@@ -139,7 +121,7 @@ func getBeforeAll() (result string) {
 
 func getAurora(cmd *cobra.Command) aurora.Aurora {
 	color, err := cmd.Flags().GetBool("color")
-	check(err)
+	src.Check(err)
 	return aurora.NewAurora(color)
 }
 
@@ -149,101 +131,9 @@ func getNever() (result string) {
 		fmt.Printf("The config file specifies to never run subproject %s,\nbut such a subproject does not exist.", result)
 		os.Exit(1)
 	}
-	if result != "" && !isDirectory(result) {
+	if result != "" && !src.IsDirectory(result) {
 		fmt.Printf("The config file specifies to never run subproject %s,\nbut this path is not a directory.", result)
 		os.Exit(1)
 	}
-	return
-}
-
-func getSubprojectNames() (result []string) {
-	always := getAlways()
-	if always != "" {
-		result = append(result, always)
-	}
-	never := getNever()
-	beforeAll := getBeforeAll()
-	afterAll := getAfterAll()
-	entries, err := ioutil.ReadDir(".")
-	check(err)
-	if beforeAll != "" {
-		result = append(result, beforeAll)
-	}
-	for _, entry := range entries {
-		entryName := entry.Name()
-		if entry.IsDir() && entryName[0] != '.' && entryName != afterAll && entryName != beforeAll && entryName != always && entryName != never {
-			result = append(result, entry.Name())
-		}
-	}
-	if afterAll != "" {
-		result = append(result, afterAll)
-	}
-	return result
-}
-
-func getChangedSubprojectNames() (result []string) {
-	// Due to the lack of array methods like "uniq" in Golang,
-	// this method iterates the filenames sorted alphabetically
-	// and only appends the resulting project name to the result if the last element isn't it.
-	always := getAlways()
-	if always != "" {
-		result = append(result, always)
-	}
-	never := getNever()
-	beforeAll := getBeforeAll()
-	if beforeAll != "" {
-		result = append(result, beforeAll)
-	}
-	afterAll := getAfterAll()
-	out, err := exec.Command("git", "diff", "--name-only", "master").Output()
-	check(err)
-	filePaths := strings.Split(string(out), "\n")
-	sort.Strings(filePaths)
-	for _, filePath := range filePaths {
-		filePath = strings.Trim(filePath, " ")
-		if len(filePath) > 0 {
-			projectName := strings.Split(filePath, "/")[0] // Git always returns "/" even on Windows
-			file, err := os.Stat(projectName)
-			if err == nil && file.IsDir() && projectName[0] != '.' && (projectName != afterAll && projectName != beforeAll && projectName != never) && (len(result) == 0 || result[len(result)-1] != projectName) {
-				result = append(result, projectName)
-			}
-		}
-	}
-	if afterAll != "" {
-		result = append(result, afterAll)
-	}
-	return result
-}
-
-func runInSubproject(subprojectName string, commands []string, c aurora.Aurora) (err error) {
-
-	// determine command to run
-	command := strings.Join(commands, " ")
-
-	// determine directory to run the command in
-	cwd, err := os.Getwd()
-	check(err)
-	dir := path.Join(cwd, subprojectName)
-
-	// run the command
-	fmt.Printf("running %s in subproject %s ...\n\n", c.Bold(c.Cyan(command)), c.Bold(c.Cyan(subprojectName)))
-	var cmd *exec.Cmd
-	if runtime.GOOS == "windows" {
-		cmd = exec.Command("cmd", "/C", command)
-	} else {
-		cmd = exec.Command("bash", "-c", command)
-	}
-	cmd.Dir = dir
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	err = cmd.Start()
-	check(err) // this error should always be nil, since we call the command shell which always exists
-	err = cmd.Wait()
-	if err != nil {
-		fmt.Printf("subproject %s has issues\n", subprojectName)
-		return err
-	}
-
-	fmt.Print("\n\n")
 	return
 }

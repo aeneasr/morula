@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 
+	"github.com/Originate/morula/src"
 	"github.com/spf13/cobra"
 )
 
@@ -24,7 +25,7 @@ func init() {
 }
 
 func createConfigFile() {
-	check(ioutil.WriteFile("morula.yml", []byte(`before-all: ""
+	src.Check(ioutil.WriteFile("morula.yml", []byte(`before-all: ""
 after-all: ""
 always: ""
 never: ""
