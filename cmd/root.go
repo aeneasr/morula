@@ -74,66 +74,8 @@ func initConfig() {
 
 // HELPER FUNCTIONS
 
-// returns whether the given directory exists in the current working directory
-func directoryExists(dirName string) bool {
-	_, err := os.Stat(dirName)
-	return !os.IsNotExist(err)
-}
-
-func getAlways() (result string) {
-	result = viper.GetString("always")
-	if result != "" && !directoryExists(result) {
-		fmt.Printf("The config file specifies to always run subproject %s,\nbut such a subproject does not exist.", result)
-		os.Exit(1)
-	}
-	if result != "" && !src.IsDirectory(result) {
-		fmt.Printf("The config file specifies to always run subproject %s,\nbut this path is not a directory.", result)
-		os.Exit(1)
-	}
-	return
-}
-
-func getAfterAll() (result string) {
-	result = viper.GetString("after-all")
-	if result != "" && !directoryExists(result) {
-		fmt.Printf("The config file specifies to run subproject %s after all others,\nbut such a subproject does not exist.", result)
-		os.Exit(1)
-	}
-	if result != "" && !src.IsDirectory(result) {
-		fmt.Printf("The config file specifies to run subproject %s after all others,\nbut this path is not a directory.", result)
-		os.Exit(1)
-	}
-	return
-}
-
-func getBeforeAll() (result string) {
-	result = viper.GetString("before-all")
-	if result != "" && !directoryExists(result) {
-		fmt.Printf("The config file specifies to run subproject %s before all others,\nbut such a subproject does not exist.", result)
-		os.Exit(1)
-	}
-	if result != "" && !src.IsDirectory(result) {
-		fmt.Printf("The config file specifies to run subproject %s before all others,\nbut this path is not a directory.", result)
-		os.Exit(1)
-	}
-	return
-}
-
 func getAurora(cmd *cobra.Command) aurora.Aurora {
 	color, err := cmd.Flags().GetBool("color")
 	src.Check(err)
 	return aurora.NewAurora(color)
-}
-
-func getNever() (result string) {
-	result = viper.GetString("never")
-	if result != "" && !directoryExists(result) {
-		fmt.Printf("The config file specifies to never run subproject %s,\nbut such a subproject does not exist.", result)
-		os.Exit(1)
-	}
-	if result != "" && !src.IsDirectory(result) {
-		fmt.Printf("The config file specifies to never run subproject %s,\nbut this path is not a directory.", result)
-		os.Exit(1)
-	}
-	return
 }
