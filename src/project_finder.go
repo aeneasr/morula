@@ -8,11 +8,14 @@ import (
 	"strings"
 )
 
+// ProjectFinder finds all projects according to a variety of matching conditions.
 type ProjectFinder struct {
 	Always, Never, BeforeAll, AfterAll string
 }
 
 
+// AllSubprojectNames returns the names of all subprojects,
+// irrespective of whether they contain changes.
 func (p *ProjectFinder) AllSubprojectNames() (result []string) {
 	if p.BeforeAll != "" {
 		result = append(result, p.BeforeAll)
@@ -31,6 +34,8 @@ func (p *ProjectFinder) AllSubprojectNames() (result []string) {
 	return result
 }
 
+// ChangedSubprojectNames returns the names of all subprojects
+// that contain changes compared to the master branch.
 func (p *ProjectFinder) ChangedSubprojectNames() (result []string) {
 	// Due to the lack of array methods like "uniq" in Golang,
 	// this method iterates the filenames sorted alphabetically

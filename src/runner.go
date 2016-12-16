@@ -10,17 +10,23 @@ import (
 	"strings"
 )
 
+// Runner runs the given command in the given subproject(s).
 type Runner struct {
 	C aurora.Aurora
 	Command string
 }
 
 
+// NewRunner creates a new Runner instance.
+// Use this convenience method if you have the command as a set of strings.
+// If you have the commands as a single string,
+// you can use the normal constructor.
 func NewRunner(C aurora.Aurora, commands []string) *Runner {
 	return &Runner{C, strings.Join(commands, " ")}
 }
 
 
+// RunInSubproject runs the command for this runner in the given subproject.
 func (runner *Runner) RunInSubproject(subprojectName string) (err error) {
 
 	// determine directory to run the command in
@@ -46,9 +52,10 @@ func (runner *Runner) RunInSubproject(subprojectName string) (err error) {
 
 
 func (runner *Runner) createCommand() *exec.Cmd {
-	if runtime.GOOS == "windows" {
+	switch runtime.GOOS {
+	case "windows":
 		return exec.Command("cmd", "/C", runner.Command)
-	} else {
+	default:
 		return exec.Command("bash", "-c", runner.Command)
 	}
 }
