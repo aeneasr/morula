@@ -2,7 +2,7 @@ name: 'Golang: Cucumber (godog)'
 actions:
 
   - match:
-    command: 'go install && go test'
+    command: 'bin/spec'
 
   - match:
       filename: '\.feature$'
