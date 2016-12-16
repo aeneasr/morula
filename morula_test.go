@@ -27,12 +27,6 @@ func FeatureContext(s *godog.Suite) {
 	// the error of the last run operation
 	var err error
 
-	// s.BeforeScenario(func(interface{}) {
-	// })
-	//
-	// s.AfterScenario(func(interface{}, error) {
-	// })
-
 	s.Step(`^a project$`, func() error {
 		testRoot = createTempDir()
 		return nil
