@@ -20,9 +20,8 @@ var allCmd = &cobra.Command{
 			fmt.Println(cmd.UsageString())
 			os.Exit(1)
 		}
-		projectFinder := src.ProjectFinder{Always: src.GetAlways(), Never: src.GetNever(), BeforeAll: src.GetBeforeAll(), AfterAll: src.GetAfterAll()}
 		runner := src.NewRunner(c, args)
-		for _, subprojectName := range projectFinder.AllSubprojectNames() {
+		for _, subprojectName := range src.AllSubprojectNames() {
 			err := runner.RunInSubproject(subprojectName)
 			if err != nil {
 				os.Exit(1)

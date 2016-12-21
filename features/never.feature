@@ -25,6 +25,25 @@ Feature: never testing certain subprojects
       | changed |
 
 
+  Scenario Outline: valid "never" entries in configuration file
+    Given a project with the subprojects "one", "assets-1", "assets-2", and the configuration file:
+      """
+      never:
+        - assets-1
+        - assets-2
+      """
+    And I am on the "feature" branch
+    And subproject "one" has changes
+    When running "morula <COMMAND> bin/spec"
+    Then it runs that command in the directories:
+      | one |
+
+    Examples:
+      | COMMAND |
+      | all     |
+      | changed |
+
+
   Scenario Outline: valid "never" entry via command-line parameter
     Given a project with the subprojects "one", "assets", and the configuration file:
       """

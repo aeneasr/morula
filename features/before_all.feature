@@ -26,6 +26,28 @@ Feature: testing some subprojects before the others
       | changed |
 
 
+  Scenario Outline: valid "before-all" entries in configuration file
+    Given a project with the subprojects "one", "two", "shared-1", "shared-2", and the configuration file:
+      """
+      before-all:
+        - shared-1
+        - shared-2
+      """
+    And I am on the "feature" branch
+    And subprojects "one", "two", and "shared" have changes
+    When running "morula <COMMAND> bin/spec"
+    Then it runs that command in the directories:
+      | shared-1 |
+      | shared-2 |
+      | one      |
+      | two      |
+
+    Examples:
+      | COMMAND |
+      | all     |
+      | changed |
+
+
   Scenario Outline: valid "before-all" entry via command-line parameter
     Given a project with the subprojects "one", "two", "shared", and the configuration file:
       """

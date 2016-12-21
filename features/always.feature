@@ -26,6 +26,27 @@ Feature: always testing certain subprojects
       | changed |
 
 
+  Scenario Outline: valid "always" entries in configuration file
+    Given a project with the subprojects "one", "e2e-1", "e2e-2", and the configuration file:
+      """
+      always:
+        - e2e-1
+        - e2e-2
+      """
+    And I am on the "feature" branch
+    And subproject "one" has changes
+    When running "morula <COMMAND> bin/spec"
+    Then it runs that command in the directories:
+      | e2e-1 |
+      | e2e-2 |
+      | one   |
+
+    Examples:
+      | COMMAND |
+      | all     |
+      | changed |
+
+
   Scenario Outline: valid "always" entry via command-line parameter
     Given a project with the subprojects "one", "e2e", and the configuration file:
       """

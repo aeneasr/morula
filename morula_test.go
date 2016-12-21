@@ -69,6 +69,18 @@ func FeatureContext(s *godog.Suite) {
 		return nil
 	})
 
+	s.Step(`^a project with the subprojects "([^"]*)", "([^"]*)", "([^"]*)", "([^"]*)", and the configuration file:$`, func(project1, project2, project3, project4 string, configText *gherkin.DocString) error {
+		testRoot = createTempDir()
+		initializeGitRepo()
+		createTestProject("passing_1", project1)
+		createTestProject("passing_2", project2)
+		createTestProject("e2e_passing", project3)
+		createTestProject("e2e_passing", project4)
+		createConfigFile(configText.Content)
+		commitAllChanges()
+		return nil
+	})
+
 	s.Step(`^I am on the "([^"]*)" branch$`, func(branchName string) error {
 		switchBranch(branchName)
 		return nil
@@ -156,6 +168,15 @@ func FeatureContext(s *godog.Suite) {
 		ioutil.WriteFile(filepath.Join(testRoot, project1, "change.txt"), []byte("changes"), 0644)
 		ioutil.WriteFile(filepath.Join(testRoot, project2, "change.txt"), []byte("changes"), 0644)
 		ioutil.WriteFile(filepath.Join(testRoot, project3, "change.txt"), []byte("changes"), 0644)
+		commitAllChanges()
+		return nil
+	})
+
+	s.Step(`^subprojects "([^"]*)", "([^"]*)", "([^"]*)", and "([^"]*)" have changes$`, func(project1, project2, project3, project4 string) error {
+		ioutil.WriteFile(filepath.Join(testRoot, project1, "change.txt"), []byte("changes"), 0644)
+		ioutil.WriteFile(filepath.Join(testRoot, project2, "change.txt"), []byte("changes"), 0644)
+		ioutil.WriteFile(filepath.Join(testRoot, project3, "change.txt"), []byte("changes"), 0644)
+		ioutil.WriteFile(filepath.Join(testRoot, project4, "change.txt"), []byte("changes"), 0644)
 		commitAllChanges()
 		return nil
 	})

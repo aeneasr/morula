@@ -26,6 +26,28 @@ Feature: testing some subprojects after the others
       | changed |
 
 
+  Scenario Outline: valid "after-all" entries in configuration file
+    Given a project with the subprojects "one", "two", "e2e-1", "e2e-2", and the configuration file:
+      """
+      after-all:
+        - e2e-1
+        - e2e-2
+      """
+    And I am on the "feature" branch
+    And subprojects "one", "two", "e2e-1", and "e2e-2" have changes
+    When running "morula <COMMAND> bin/spec"
+    Then it runs that command in the directories:
+      | one   |
+      | two   |
+      | e2e-1 |
+      | e2e-2 |
+
+    Examples:
+      | COMMAND |
+      | all     |
+      | changed |
+
+
   Scenario Outline: valid "after-all" entry via command-line parameter
     Given a project with the subprojects "one", "two", "e2e", and the configuration file:
       """

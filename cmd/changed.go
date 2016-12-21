@@ -23,9 +23,8 @@ against the "master" branch.`,
 			fmt.Println(cmd.UsageString())
 			os.Exit(1)
 		}
-		projectFinder := src.ProjectFinder{Always: src.GetAlways(), Never: src.GetNever(), BeforeAll: src.GetBeforeAll(), AfterAll: src.GetAfterAll()}
 		runner := src.NewRunner(c, args)
-		for _, subprojectName := range projectFinder.ChangedSubprojectNames() {
+		for _, subprojectName := range src.ChangedSubprojectNames() {
 			err := runner.RunInSubproject(subprojectName)
 			if err != nil {
 				os.Exit(1)
