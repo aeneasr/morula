@@ -104,3 +104,8 @@ run `morula setup`.
 __[Lerna](https://github.com/lerna/lerna)__
 - only works if all subprojects are NPM packages
 - enforces an unnecessarily nested directory structure
+
+
+## Contributing
+
+Please see our [developer documentation](CONTRIBUTING.md)
