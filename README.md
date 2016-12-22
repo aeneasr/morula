@@ -20,11 +20,6 @@ Download the appropriate binary for your platform from the
 and save it somewhere in your PATH.
 
 
-## Repo structure
-
-Your monorepository should contain the subprojects in top-level folders.
-
-
 ## Commands
 
 - __[`morula all <command>`](features/all.feature)__
@@ -34,6 +29,49 @@ Your monorepository should contain the subprojects in top-level folders.
   that is changed compared to the main branch
 - __[`morula setup`](features/setup.feature)__
   creates an example configuration file with the default options
+
+
+## Repo structure
+
+Your monorepository should contain the subprojects in top-level folders.
+
+### How to make a task do different things in each subproject
+
+Let's say your monorepo contains 2 projects,
+and you want to use Morula to set all of them up with one command
+by running `morula all setup`.
+However, the different subprojects in your monorepo
+require different commands to set them up.
+For example, one project could be Node.JS code base
+and you need to run `npm install` to set it up,
+the other could be written in Ruby
+and you need to run `bundle install` to set it up.
+
+A good way to manage this situation is to create helper scripts in each subproject,
+which contain the commands to set up their respective subproject.
+In this case, you create a helper script called `setup` in each subproject.
+These can be executable Bash scripts for Mac/Linux and CMD files for Windows.
+Your directory structure looks something like this:
+
+```
+my_monorepo/
+  │
+  ├─ project_A/
+  │  │
+  │  ├─ setup      (contains commands to set up project A on Linux)
+  │  ├─ setup.cmd  (contains commands to set up project A on Windows)
+  │  └─ (code for project A)
+  │
+  └─ project_B/
+     │
+     ├─ setup      (contains commands to set up project B on Linux
+     ├─ setup.cmd  (contains commands to set up project B on Windows)
+     └─ (code for project B)
+```
+
+Another advantage of this setup is that when working within one subproject,
+you can simply run `setup` to set it up,
+and don't have to remember the project-specific commands any longer.
 
 
 ## Configuration
