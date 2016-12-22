@@ -3,16 +3,17 @@ package main
 import (
 	"errors"
 	"fmt"
-	"github.com/DATA-DOG/godog"
-	"github.com/DATA-DOG/godog/gherkin"
-	"github.com/kr/pretty"
-	"github.com/mattn/go-shellwords"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
 	"testing"
+
+	"github.com/DATA-DOG/godog"
+	"github.com/DATA-DOG/godog/gherkin"
+	"github.com/kr/pretty"
+	"github.com/mattn/go-shellwords"
 )
 
 // the temp dir in which the test repos live
@@ -101,6 +102,15 @@ func FeatureContext(s *godog.Suite) {
 		}
 		if !strings.Contains(output, expectedText.Content) {
 			return fmt.Errorf("Expected to see\n\"%s\" in\n\"%s\"", expectedText.Content, output)
+		}
+		return nil
+	})
+
+	s.Step(`^it prints:$`, func(text *gherkin.DocString) error {
+		matched, err := regexp.Match(text.Content, []byte(output))
+		check(err)
+		if !matched {
+			return errors.New("output does not match")
 		}
 		return nil
 	})
