@@ -16,7 +16,7 @@ var setupCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		c := getAurora(cmd)
 		createConfigFile()
-		fmt.Printf("configuration file %s created", c.Bold(c.Cyan("morula.yml")))
+		fmt.Printf("configuration file %s created\n", c.Bold(c.Cyan("morula.yml")))
 	},
 }
 
